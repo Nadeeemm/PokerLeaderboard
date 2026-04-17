@@ -2341,7 +2341,6 @@
     let isAuthenticated = false;
     let authPendingAction = null;
     const SECRET_CODE = '1108'; // Change this to your secret code
-
     async function loadState() {
       try {
         const response = await fetch('data.json');
@@ -2357,8 +2356,23 @@
         console.log('Using fallback data');
         state = window.fallbackData || { players: [], games: [], selectedGame: null };
       }
+
+      const selectedDate = state.games.find(g => g.id === state.selectedGame)?.date;
+
+      // reassign IDs
+      state.games.forEach((game, index) => {
+        game.id = String(index + 1);
+      });
+
+      // restore selection by date
+      const match = state.games.find(g => g.date === selectedDate);
+      state.selectedGame = match
+        ? match.id
+        : state.games.at(-1)?.id || null;
+
       init();
     }
+
 
     async function saveState() {
       try {
@@ -2666,7 +2680,7 @@
       const lb = document.getElementById('pergame-lb');
       if (!sel || !lb) return;
       if (!state.games.length) { sel.innerHTML = ''; lb.innerHTML = '<div class="empty"><div class="card-icon">🎴</div>No games yet.</div>'; return; }
-      sel.innerHTML = [...state.games].reverse().map(g => `
+      sel.innerHTML = [...state.games].map(g => `
       <div class="game-pill ${state.selectedGame === g.id ? 'active' : ''}" onclick="selectGame('${g.id}')">${g.name}</div>`).join('');
       const game = state.games.find(g => g.id === state.selectedGame) || state.games[state.games.length - 1];
       if (!game) return;
@@ -2702,7 +2716,7 @@
       const el = document.getElementById('game-history');
       if (!el) return;
       if (!state.games.length) { el.innerHTML = '<div class="empty"><div class="card-icon">🃏</div>No games recorded yet.</div>'; return; }
-      el.innerHTML = [...state.games].reverse().map(g => {
+      el.innerHTML = [...state.games].map(g => {
         const sorted = [...g.results].sort((a, b) => (b.type === 'win' ? b.amount : -b.amount) - (a.type === 'win' ? a.amount : -a.amount));
         return `<div class="game-card">
         <div class="game-card-header">
@@ -2913,7 +2927,7 @@
       if (playerGames.length === 0) {
         gamesList.innerHTML = '<div style="color:rgba(232,224,200,0.5);font-size:12px;padding:1rem;text-align:center">No games recorded yet</div>';
       } else {
-        gamesList.innerHTML = playerGames.reverse().map(g => `
+        gamesList.innerHTML = playerGames.map(g => `
         <div class="game-item">
           <div class="game-item-name">${g.gameName} (${g.date})</div>
           <div class="game-item-result ${g.type === 'win' ? 'net-pos' : 'net-neg'}">
