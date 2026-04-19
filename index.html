@@ -2341,34 +2341,31 @@
     let isAuthenticated = false;
     let authPendingAction = null;
     const SECRET_CODE = '1108'; // Change this to your secret code
+    
+    // Embedded data - no need to fetch from files
+    const embeddedData = {"players":[{"id":"1","name":"Gaurav"},{"id":"2","name":"Vatsal"},{"id":"3","name":"Nadeem"},{"id":"4","name":"Monty"},{"id":"5","name":"Hanu"},{"id":"6","name":"Anush"},{"id":"7","name":"Sam"},{"id":"8","name":"Keshav"},{"id":"9","name":"HeHe"},{"id":"10","name":"Ginni"},{"id":"11","name":"Manku"},{"id":"12","name":"Ritesh"},{"id":"13","name":"Ruchika"},{"id":"14","name":"Simran"},{"id":"15","name":"Sarthak"},{"id":"16","name":"Harsh"}],"games":[{"id":"1","name":"Poker Night April 11th","date":"2026-04-11","results":[{"playerId":"4","playerName":"Monty","type":"win","amount":2653.3},{"playerId":"11","playerName":"Manku","type":"win","amount":2088.7},{"playerId":"5","playerName":"Hanu","type":"win","amount":1533.1},{"playerId":"6","playerName":"Anush","type":"win","amount":422.1},{"playerId":"3","playerName":"Nadeem","type":"win","amount":316.0},{"playerId":"1","playerName":"Gaurav","type":"loss","amount":2750.0},{"playerId":"12","playerName":"Ritesh","type":"loss","amount":1400.0},{"playerId":"8","playerName":"Keshav","type":"loss","amount":1563.2},{"playerId":"10","playerName":"Ginni","type":"loss","amount":1300.0}]},{"id":"2","name":"Poker Night April 12th","date":"2026-04-12","results":[{"playerId":"1","playerName":"Gaurav","type":"win","amount":2602.5},{"playerId":"8","playerName":"Keshav","type":"win","amount":1294.6},{"playerId":"3","playerName":"Nadeem","type":"win","amount":524.0},{"playerId":"12","playerName":"Ritesh","type":"loss","amount":1336.0},{"playerId":"6","playerName":"Anush","type":"loss","amount":1029.6},{"playerId":"7","playerName":"Sam","type":"loss","amount":1000.0},{"playerId":"4","playerName":"Monty","type":"loss","amount":536.0},{"playerId":"9","playerName":"HeHe","type":"loss","amount":200.0},{"playerId":"11","playerName":"Manku","type":"loss","amount":200.0},{"playerId":"14","playerName":"Simran","type":"loss","amount":76.0},{"playerId":"5","playerName":"Hanu","type":"loss","amount":88.0}]},{"id":"3","name":"Poker Night April 13th","date":"2026-04-13","results":[{"playerId":"8","playerName":"Keshav","type":"win","amount":1647.9},{"playerId":"4","playerName":"Monty","type":"win","amount":1608.3},{"playerId":"3","playerName":"Nadeem","type":"win","amount":440.0},{"playerId":"5","playerName":"Hanu","type":"win","amount":334.1},{"playerId":"11","playerName":"Manku","type":"win","amount":276.5},{"playerId":"6","playerName":"Anush","type":"loss","amount":3111.0},{"playerId":"14","playerName":"Simran","type":"loss","amount":385.8},{"playerId":"9","playerName":"HeHe","type":"loss","amount":388.0},{"playerId":"10","playerName":"Ginni","type":"loss","amount":250.0},{"playerId":"1","playerName":"Gaurav","type":"loss","amount":172.0}]},{"id":"4","name":"Poker Night April 14th","date":"2026-04-14","results":[{"playerId":"1","playerName":"Gaurav","type":"win","amount":3496.9},{"playerId":"5","playerName":"Hanu","type":"win","amount":1821.4},{"playerId":"7","playerName":"Sam","type":"win","amount":807.9},{"playerId":"2","playerName":"Vatsal","type":"win","amount":615.7},{"playerId":"3","playerName":"Nadeem","type":"win","amount":41.7},{"playerId":"11","playerName":"Manku","type":"win","amount":10.8},{"playerId":"8","playerName":"Keshav","type":"loss","amount":3000.0},{"playerId":"4","playerName":"Monty","type":"loss","amount":1000.0},{"playerId":"12","playerName":"Ritesh","type":"loss","amount":900.0},{"playerId":"10","playerName":"Ginni","type":"loss","amount":639.7},{"playerId":"13","playerName":"Ruchika","type":"loss","amount":630.0},{"playerId":"6","playerName":"Anush","type":"loss","amount":624.7}]},{"id":"5","name":"Poker Night April 15th","date":"2026-04-15","results":[{"playerId":"4","playerName":"Monty","type":"win","amount":4657.2},{"playerId":"11","playerName":"Manku","type":"win","amount":4061.2},{"playerId":"5","playerName":"Hanu","type":"win","amount":953.4},{"playerId":"1","playerName":"Gaurav","type":"win","amount":1746.6},{"playerId":"9","playerName":"HeHe","type":"loss","amount":1.2},{"playerId":"3","playerName":"Nadeem","type":"loss","amount":1605.0},{"playerId":"8","playerName":"Keshav","type":"loss","amount":3281.7},{"playerId":"10","playerName":"Ginni","type":"loss","amount":165.0},{"playerId":"6","playerName":"Anush","type":"loss","amount":5826.1},{"playerId":"2","playerName":"Vatsal","type":"loss","amount":539.4}]},{"id":"6","name":"Poker Night April 16th","date":"2026-04-16","results":[{"playerId":"1","playerName":"Gaurav","type":"win","amount":1419.8},{"playerId":"2","playerName":"Vatsal","type":"win","amount":1159.9},{"playerId":"3","playerName":"Nadeem","type":"win","amount":1098.0},{"playerId":"4","playerName":"Monty","type":"win","amount":416.7},{"playerId":"5","playerName":"Hanu","type":"win","amount":183.6},{"playerId":"6","playerName":"Anush","type":"loss","amount":1896.0},{"playerId":"7","playerName":"Sam","type":"loss","amount":800.0},{"playerId":"8","playerName":"Keshav","type":"loss","amount":1275.6},{"playerId":"9","playerName":"HeHe","type":"loss","amount":200.0},{"playerId":"10","playerName":"Ginni","type":"loss","amount":106.4}]},{"id":"7","name":"Poker Night April 17th","date":"2026-04-17","results":[{"playerId":"4","playerName":"Monty","type":"win","amount":3594.5},{"playerId":"6","playerName":"Anush","type":"win","amount":530.9},{"playerId":"7","playerName":"Sam","type":"win","amount":397.5},{"playerId":"3","playerName":"Nadeem","type":"win","amount":5.7},{"playerId":"12","playerName":"Ritesh","type":"loss","amount":889.4},{"playerId":"1","playerName":"Gaurav","type":"loss","amount":285.3},{"playerId":"9","playerName":"HeHe","type":"loss","amount":128.3},{"playerId":"13","playerName":"Ruchika","type":"loss","amount":25.6},{"playerId":"15","playerName":"Sarthak","type":"loss","amount":400.0},{"playerId":"11","playerName":"Manku","type":"loss","amount":1100.0},{"playerId":"2","playerName":"Vatsal","type":"loss","amount":1700.0}]},{"id":"8","name":"Poker Night April 18th","date":"2026-04-18","results":[{"playerId":"16","playerName":"Harsh","type":"win","amount":2108.7},{"playerId":"1","playerName":"Gaurav","type":"win","amount":801.3},{"playerId":"3","playerName":"Nadeem","type":"win","amount":305.4},{"playerId":"4","playerName":"Monty","type":"win","amount":14.3},{"playerId":"6","playerName":"Anush","type":"loss","amount":2000.0},{"playerId":"8","playerName":"Keshav","type":"loss","amount":1029.7},{"playerId":"7","playerName":"Sam","type":"loss","amount":200.0}]}]};
+    
     async function loadState() {
       try {
-        const response = await fetch('data.json');
-        if (response.ok) {
-          state = await response.json();
-          console.log('Data loaded from data.json');
+        const players = embeddedData.players || [];
+        const games = embeddedData.games || [];
+        
+        state = { players, games, selectedGame: null };
+        const selectedDate = localStorage.getItem('selectedGameDate');
+
+        // Restore selection by date
+        if (selectedDate) {
+          const match = state.games.find(g => g.date === selectedDate);
+          state.selectedGame = match ? match.id : state.games.at(-1)?.id || null;
         } else {
-          console.log('data.json not found, trying fallback data');
-          state = window.fallbackData || { players: [], games: [], selectedGame: null };
+          state.selectedGame = state.games.at(-1)?.id || null;
         }
+
+        console.log('State loaded:', state);
       } catch (e) {
-        console.error('Error loading data.json:', e);
-        console.log('Using fallback data');
-        state = window.fallbackData || { players: [], games: [], selectedGame: null };
+        console.error('Error loading state:', e);
+        state = { players: [], games: [], selectedGame: null };
       }
-
-      const selectedDate = state.games.find(g => g.id === state.selectedGame)?.date;
-
-      // reassign IDs
-      state.games.forEach((game, index) => {
-        game.id = String(index + 1);
-      });
-
-      // restore selection by date
-      const match = state.games.find(g => g.date === selectedDate);
-      state.selectedGame = match
-        ? match.id
-        : state.games.at(-1)?.id || null;
 
       init();
     }
@@ -2376,27 +2373,60 @@
 
     async function saveState() {
       try {
-        // Save to localStorage as backup
+        // Save to localStorage for client-side tracking
+        const selectedGame = state.games.find(g => g.id === state.selectedGame);
+        if (selectedGame) {
+          localStorage.setItem('selectedGameDate', selectedGame.date);
+        }
         localStorage.setItem('poker_state_backup', JSON.stringify(state));
 
-        // Log to console for manual save
-        console.log('Current state (copy to data.json):');
-        console.log(JSON.stringify(state, null, 2));
+        // Log to console for monitoring
+        console.log('Current state updated');
+        console.log('Total games:', state.games.length);
+        console.log('Players:', state.players.length);
 
-        // Auto-download as JSON
-        downloadDataAsJSON();
+        showToast('Progress saved!');
       } catch (e) {
         console.error('Error saving state:', e);
       }
     }
 
+    async function saveGameFile(game) {
+      try {
+        // Generate game file name based on game index
+        const gameIndex = state.games.findIndex(g => g.id === game.id) + 1;
+        const gameFileName = `game-${gameIndex}.json`;
+        
+        // Log the game data that should be saved
+        console.log(`Game file to save (${gameFileName}):`, JSON.stringify(game, null, 2));
+        
+        // For demonstration, also download the game file
+        const dataStr = JSON.stringify(game, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = gameFileName;
+        link.click();
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        console.error('Error saving game file:', e);
+      }
+    }
+
     function downloadDataAsJSON() {
-      const dataStr = JSON.stringify(state, null, 2);
+      // Export all data as a complete backup
+      const allData = {
+        players: state.players,
+        games: state.games,
+        exportDate: new Date().toISOString()
+      };
+      const dataStr = JSON.stringify(allData, null, 2);
       const dataBlob = new Blob([dataStr], { type: 'application/json' });
       const url = URL.createObjectURL(dataBlob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `poker_data_${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `poker_backup_${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
       URL.revokeObjectURL(url);
     }
@@ -2552,9 +2582,15 @@
 
       if (authPendingAction === 'add-game-confirmed') {
         authPendingAction = null;
-        const game = { id: Date.now() + '', name, date, results };
+        const gameId = String(state.games.length + 1);
+        const game = { id: gameId, name, date, results };
         state.games.push(game);
         state.selectedGame = game.id;
+        
+        // Save the individual game file
+        saveGameFile(game);
+        
+        // Update state
         saveState();
         document.getElementById('game-name-input').value = '';
         renderResultRows();
