@@ -1,37 +1,166 @@
+# ============================================================================
+# GitHub Pages Automatic Deployment Workflow
+# ============================================================================
+# Purpose:
+#   Automatically deploy the latest code to GitHub Pages whenever a pull
+#   request (PR) is merged into the main branch.
+#
+# Workflow Trigger:
+#   - Any push to the 'main' branch (typically PR merge events)
+#
+# Deployment Target:
+#   - GitHub Pages (auto-published static site)
+#
+# Requirements:
+#   1. Enable GitHub Pages in repository settings
+#   2. Set 'GitHub Actions' as the Pages source
+#   3. Repository must be public (or private with GitHub Pages enabled)
+# ============================================================================
+
 name: Deploy to GitHub Pages
 
+# TRIGGER CONFIGURATION
+# ====================
+# This workflow runs when code is pushed to the main branch
+# (which includes merged pull requests)
 on:
   push:
     branches:
-      - main
+      - main  # Only trigger on main branch pushes
 
+# PERMISSIONS CONFIGURATION
+# =========================
+# Define the minimum required permissions for this workflow
 permissions:
+  # contents: read
+  #   - Purpose: Read repository files and code
+  #   - Used by: checkout@v4 action
   contents: read
+
+  # pages: write
+  #   - Purpose: Write permissions for GitHub Pages deployment
+  #   - Used by: deploy-pages@v4 action
   pages: write
+
+  # id-token: write
+  #   - Purpose: Generate OIDC tokens for secure authentication
+  #   - Used by: GitHub's secure deployment workflow
+  #   - Security: Eliminates need for stored credentials
   id-token: write
 
+# CONCURRENCY CONFIGURATION
+# ==========================
+# Prevent multiple deployments from running simultaneously
+# - group: Identifies deployments as part of the same group
+# - cancel-in-progress: Cancel previous workflow if new one starts
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: "pages"           # Group all Pages deployments together
+  cancel-in-progress: false  # Don't cancel if deployment is in progress
 
+# JOBS CONFIGURATION
+# ==================
 jobs:
+  # ========================================================================
+  # JOB: deploy
+  # Purpose: Build artifact and deploy to GitHub Pages
+  # ========================================================================
   deploy:
+    # ENVIRONMENT CONFIGURATION
+    # ==========================
+    # Set deployment environment and capture the deployment URL
     environment:
+      # Environment name - 'github-pages' is special and enables Pages deployment
       name: github-pages
+      
+      # URL where the deployed site will be accessible
+      # ${{ steps.deployment.outputs.page_url }} is provided by deploy-pages action
       url: ${{ steps.deployment.outputs.page_url }}
+    
+    # RUNNER CONFIGURATION
+    # ====================
+    # ubuntu-latest provides a fresh Linux environment for running the workflow
     runs-on: ubuntu-latest
+    
+    # WORKFLOW STEPS
+    # ==============
     steps:
-      - name: Checkout
+      # ====================================================================
+      # STEP 1: Checkout Repository Code
+      # ====================================================================
+      # Action: actions/checkout@v4
+      # Purpose: 
+      #   Clone the repository to the GitHub Actions runner environment
+      #   This gives us access to all repository files for deployment
+      # 
+      # What happens:
+      #   - Downloads the repository code from the branch that triggered this
+      #   - Makes all files available in ${{ github.workspace }}
+      # ====================================================================
+      - name: Checkout repository code
         uses: actions/checkout@v4
+        # No additional parameters needed - defaults work for our use case
 
-      - name: Setup Pages
+      # ====================================================================
+      # STEP 2: Configure GitHub Pages Settings
+      # ====================================================================
+      # Action: actions/configure-pages@v4
+      # Purpose:
+      #   Prepare the GitHub Pages environment with necessary configuration
+      #   Sets up hosting settings and enables the deployment process
+      #
+      # What happens:
+      #   - Enables GitHub Pages for this repository
+      #   - Configures build environment for static site hosting
+      #   - Prepares the deployment target
+      # ====================================================================
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v4
+        # No additional parameters needed
 
-      - name: Upload artifact
+      # ====================================================================
+      # STEP 3: Upload Artifact to GitHub Pages
+      # ====================================================================
+      # Action: actions/upload-pages-artifact@v3
+      # Purpose:
+      #   Package repository files as a deployment artifact that GitHub Pages
+      #   will later publish to the web
+      #
+      # Parameters:
+      #   path: '.'  -> Upload entire repository root directory
+      #               -> Includes all HTML, CSS, JS, JSON, images, etc.
+      #               -> This is the public root of your static site
+      #
+      # What happens:
+      #   - Compresses all files in the specified path
+      #   - Creates a GitHub Actions artifact
+      #   - Makes it available for the deploy step
+      # ====================================================================
+      - name: Upload artifact to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
+          # Artifact path configuration
+          # '.' means the repository root directory
+          # GitHub Pages will serve these files directly
           path: '.'
 
+      # ====================================================================
+      # STEP 4: Deploy Artifact to GitHub Pages
+      # ====================================================================
+      # Action: actions/deploy-pages@v4
+      # Purpose:
+      #   Publish the artifact to your GitHub Pages URL so it's live on the web
+      #
+      # Output:
+      #   step.deployment.outputs.page_url -> URL where site is published
+      #                                       Used in environment.url above
+      #
+      # What happens:
+      #   - Takes the artifact from step 3
+      #   - Publishes it to your GitHub Pages domain
+      #   - Makes your site live at: https://[username].github.io/[repo]/
+      #       OR custom domain if configured in Pages settings
+      #   - Outputs the deployment URL for confirmation
+      # ====================================================================
       - name: Deploy to GitHub Pages
-        id: deployment
+        id: deployment  # This ID allows other steps to reference this step's outputs
         uses: actions/deploy-pages@v4

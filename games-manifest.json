@@ -1,0 +1,52 @@
+{
+  "games": [
+    {
+      "id": "1",
+      "name": "Poker Night April 11th",
+      "date": "2026-04-11",
+      "file": "game-1.json"
+    },
+    {
+      "id": "2",
+      "name": "Poker Night April 12th",
+      "date": "2026-04-12",
+      "file": "game-2.json"
+    },
+    {
+      "id": "3",
+      "name": "Poker Night April 13th",
+      "date": "2026-04-13",
+      "file": "game-3.json"
+    },
+    {
+      "id": "4",
+      "name": "Poker Night April 14th",
+      "date": "2026-04-14",
+      "file": "game-4.json"
+    },
+    {
+      "id": "5",
+      "name": "Poker Night April 15th",
+      "date": "2026-04-15",
+      "file": "game-5.json"
+    },
+    {
+      "id": "6",
+      "name": "Poker Night April 16th",
+      "date": "2026-04-16",
+      "file": "game-6.json"
+    },
+    {
+      "id": "7",
+      "name": "Poker Night April 17th",
+      "date": "2026-04-17",
+      "file": "game-7.json"
+    },
+    {
+      "id": "8",
+      "name": "Poker Night April 18th",
+      "date": "2026-04-18",
+      "file": "game-8.json"
+    }
+  ]
+}
