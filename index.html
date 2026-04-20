@@ -2235,6 +2235,8 @@
 
       <div class="tabs">
         <button class="tab active" onclick="switchTab('overall')">Overall</button>
+        <button class="tab" onclick="switchTab('weekly')">Weekly</button>
+        <button class="tab" onclick="switchTab('monthly')">Monthly</button>
         <button class="tab" onclick="switchTab('pergame')">Per Game</button>
         <button class="tab" onclick="switchTab('users')">Users</button>
         <button class="tab" onclick="switchTab('players')">Players</button>
@@ -2245,6 +2247,20 @@
         <div class="stats-row" id="overall-stats"></div>
         <div class="section-title">All-time standings</div>
         <div id="overall-lb"></div>
+      </div>
+
+      <!-- WEEKLY TAB -->
+      <div class="panel" id="tab-weekly">
+        <div class="section-title">📅 Weekly Performance</div>
+        <div class="game-selector" id="week-selector"></div>
+        <div id="weekly-lb"></div>
+      </div>
+
+      <!-- MONTHLY TAB -->
+      <div class="panel" id="tab-monthly">
+        <div class="section-title">📊 Monthly Performance</div>
+        <div class="game-selector" id="month-selector"></div>
+        <div id="monthly-lb"></div>
       </div>
 
       <!-- PER GAME TAB -->
@@ -2502,6 +2518,8 @@
       if (di) di.value = new Date().toISOString().slice(0, 10);
       renderPlayers();
       renderOverall();
+      renderWeekly();
+      renderMonthly();
       renderPerGame();
       renderUsers();
       renderHistory();
@@ -2516,6 +2534,8 @@
       event.target.classList.add('active');
       if (t === 'pergame') renderPerGame();
       if (t === 'overall') renderOverall();
+      if (t === 'weekly') renderWeekly();
+      if (t === 'monthly') renderMonthly();
       if (t === 'users') renderUsers();
       if (t === 'players') renderHistory();
     }
@@ -2610,6 +2630,8 @@
         document.getElementById('game-name-input').value = '';
         renderResultRows();
         renderOverall();
+        renderWeekly();
+        renderMonthly();
         renderPerGame();
         renderUsers();
         renderHistory();
@@ -2630,6 +2652,8 @@
       if (state.selectedGame === id) state.selectedGame = state.games.length ? state.games[state.games.length - 1].id : null;
       saveState();
       renderOverall();
+      renderWeekly();
+      renderMonthly();
       renderPerGame();
       renderUsers();
       renderHistory();
@@ -2648,6 +2672,82 @@
         });
       });
       return Object.values(stats).filter(s => s.games > 0).sort((a, b) => b.net - a.net);
+    }
+
+    function getWeekKey(dateStr) {
+      const date = new Date(dateStr);
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthName = monthNames[date.getMonth()];
+      const dayOfMonth = date.getDate();
+      const weekOfMonth = Math.ceil(dayOfMonth / 7);
+      const weekNames = ['1st', '2nd', '3rd', '4th', '5th'];
+      return `${monthName}-${weekNames[weekOfMonth - 1]} week`;
+    }
+
+    function getWeekDateRangeFromGames(weekKey) {
+      // Find a game in this week to get the correct year
+      for (const game of state.games) {
+        if (getWeekKey(game.date) === weekKey) {
+          const date = new Date(game.date);
+          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          const monthName = monthNames[date.getMonth()];
+          const weekPart = weekKey.split('-')[1];
+          const weekNumber = parseInt(weekPart);
+          
+          const startDate = new Date(date.getFullYear(), date.getMonth(), (weekNumber - 1) * 7 + 1);
+          const endDate = new Date(date.getFullYear(), date.getMonth(), weekNumber * 7);
+          
+          const formatDate = (d) => d.toISOString().slice(0, 10);
+          return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+        }
+      }
+      return '';
+    }
+
+    function getMonthKey(dateStr) {
+      const date = new Date(dateStr);
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+    }
+
+    function getWeeklyStats() {
+      const weeks = {};
+      state.games.forEach(g => {
+        const weekKey = getWeekKey(g.date);
+        if (!weeks[weekKey]) weeks[weekKey] = {};
+        g.results.forEach(r => {
+          if (!weeks[weekKey][r.playerId]) weeks[weekKey][r.playerId] = { name: r.playerName, wins: 0, losses: 0, net: 0, games: 0 };
+          weeks[weekKey][r.playerId].games++;
+          if (r.type === 'win') { weeks[weekKey][r.playerId].wins++; weeks[weekKey][r.playerId].net += r.amount; }
+          else { weeks[weekKey][r.playerId].losses++; weeks[weekKey][r.playerId].net -= r.amount; }
+        });
+      });
+
+      const result = {};
+      Object.entries(weeks).forEach(([weekKey, stats]) => {
+        result[weekKey] = Object.values(stats).filter(s => s.games > 0).sort((a, b) => b.net - a.net);
+      });
+      return result;
+    }
+
+    function getMonthlyStats() {
+      const months = {};
+      state.games.forEach(g => {
+        const monthKey = getMonthKey(g.date);
+        if (!months[monthKey]) months[monthKey] = {};
+        g.results.forEach(r => {
+          if (!months[monthKey][r.playerId]) months[monthKey][r.playerId] = { name: r.playerName, wins: 0, losses: 0, net: 0, games: 0 };
+          months[monthKey][r.playerId].games++;
+          if (r.type === 'win') { months[monthKey][r.playerId].wins++; months[monthKey][r.playerId].net += r.amount; }
+          else { months[monthKey][r.playerId].losses++; months[monthKey][r.playerId].net -= r.amount; }
+        });
+      });
+
+      const result = {};
+      Object.entries(months).forEach(([monthKey, stats]) => {
+        result[monthKey] = Object.values(stats).filter(s => s.games > 0).sort((a, b) => b.net - a.net);
+      });
+      return result;
     }
 
     function renderOverall() {
@@ -2681,6 +2781,118 @@
         </tr>`).join('')}
       </tbody>
     </table>`;
+    }
+
+    function renderWeekly() {
+      const sel = document.getElementById('week-selector');
+      const lb = document.getElementById('weekly-lb');
+      if (!sel || !lb) return;
+      
+      const weeklyStats = getWeeklyStats();
+      const weeks = Object.keys(weeklyStats).sort();
+      
+      if (!weeks.length) {
+        sel.innerHTML = '';
+        lb.innerHTML = '<div class="empty"><div class="card-icon">📅</div>No games yet.<br>Weekly stats coming soon!</div>';
+        return;
+      }
+
+      if (!state.selectedWeek) state.selectedWeek = weeks[weeks.length - 1];
+      
+      sel.innerHTML = weeks.map(week => `
+      <div class="game-pill ${state.selectedWeek === week ? 'active' : ''}" onclick="selectWeek('${week}')">${week}</div>`).join('');
+      
+      const stats = weeklyStats[state.selectedWeek] || [];
+      const dateRange = getWeekDateRangeFromGames(state.selectedWeek);
+      
+      if (!stats.length) {
+        lb.innerHTML = '<div class="empty"><div class="card-icon">📊</div>No games this week.</div>';
+        return;
+      }
+
+      lb.innerHTML = `
+      <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${state.selectedWeek}</span>
+        <span style="font-size:11px;color:rgba(232,224,200,0.4)">${dateRange}</span>
+      </div>
+      <table class="lb-table">
+        <thead><tr>
+          <th style="width:36px">#</th>
+          <th>Player</th>
+          <th>W/L</th>
+          <th style="text-align:right">Net</th>
+        </tr></thead>
+        <tbody>${stats.map((s, i) => `
+          <tr class="lb-row">
+            <td><div class="rank-badge rank-${i < 3 ? i + 1 : 'other'}">${i + 1}</div></td>
+            <td class="player-name">${s.name}</td>
+            <td><span class="wins">▲${s.wins}</span> <span class="losses">▼${s.losses}</span></td>
+            <td style="text-align:right" class="${s.net > 0 ? 'net-pos' : s.net < 0 ? 'net-neg' : 'net-zero'}">
+              ${s.net > 0 ? '+' : ''}${s.net.toFixed(0)}
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+    }
+
+    function renderMonthly() {
+      const sel = document.getElementById('month-selector');
+      const lb = document.getElementById('monthly-lb');
+      if (!sel || !lb) return;
+      
+      const monthlyStats = getMonthlyStats();
+      const months = Object.keys(monthlyStats).sort().reverse();
+      
+      if (!months.length) {
+        sel.innerHTML = '';
+        lb.innerHTML = '<div class="empty"><div class="card-icon">📊</div>No games yet.<br>Monthly stats coming soon!</div>';
+        return;
+      }
+
+      if (!state.selectedMonth) state.selectedMonth = months[0];
+      
+      sel.innerHTML = months.map(month => `
+      <div class="game-pill ${state.selectedMonth === month ? 'active' : ''}" onclick="selectMonth('${month}')">${month}</div>`).join('');
+      
+      const stats = monthlyStats[state.selectedMonth] || [];
+      
+      if (!stats.length) {
+        lb.innerHTML = '<div class="empty"><div class="card-icon">📊</div>No games this month.</div>';
+        return;
+      }
+
+      lb.innerHTML = `
+      <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${state.selectedMonth} Standings</span>
+      </div>
+      <table class="lb-table">
+        <thead><tr>
+          <th style="width:36px">#</th>
+          <th>Player</th>
+          <th>W/L</th>
+          <th style="text-align:right">Net</th>
+        </tr></thead>
+        <tbody>${stats.map((s, i) => `
+          <tr class="lb-row">
+            <td><div class="rank-badge rank-${i < 3 ? i + 1 : 'other'}">${i + 1}</div></td>
+            <td class="player-name">${s.name}</td>
+            <td><span class="wins">▲${s.wins}</span> <span class="losses">▼${s.losses}</span></td>
+            <td style="text-align:right" class="${s.net > 0 ? 'net-pos' : s.net < 0 ? 'net-neg' : 'net-zero'}">
+              ${s.net > 0 ? '+' : ''}${s.net.toFixed(0)}
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+    }
+
+    function selectWeek(week) {
+      state.selectedWeek = week;
+      renderWeekly();
+    }
+
+    function selectMonth(month) {
+      state.selectedMonth = month;
+      renderMonthly();
     }
 
     function renderUsers() {
