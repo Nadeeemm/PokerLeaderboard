@@ -47,6 +47,12 @@
       "name": "Poker Night April 18th",
       "date": "2026-04-18",
       "file": "game-8.json"
+    },
+    {
+      "id": "9",
+      "name": "Poker Night April 19th",
+      "date": "2026-04-19",
+      "file": "game-9.json"
     }
   ]
 }
