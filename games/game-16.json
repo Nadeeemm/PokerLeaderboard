@@ -1,0 +1,43 @@
+{
+  "id": "16",
+  "name": "Poker Night April 27th",
+  "date": "2026-04-27",
+  "results": [
+    {
+      "playerId": "3",
+      "playerName": "Nadeem",
+      "type": "win",
+      "amount": 837.8
+    },
+    {
+      "playerId": "1",
+      "playerName": "Gaurav",
+      "type": "loss",
+      "amount": 1497.1
+    },
+    {
+      "playerId": "16",
+      "playerName": "Harsh",
+      "type": "loss",
+      "amount": 200.0
+    },
+    {
+      "playerId": "8",
+      "playerName": "Keshav",
+      "type": "win",
+      "amount": 1513.1
+    },
+    {
+      "playerId": "6",
+      "playerName": "Anush",
+      "type": "loss",
+      "amount": 507
+    },
+    {
+      "playerId": "4",
+      "playerName": "Monty",
+      "type": "loss",
+      "amount": 146.8
+    }
+  ]
+}
