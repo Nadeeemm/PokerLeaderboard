@@ -3,10 +3,10 @@
 # ============================================================================
 # Purpose:
 #   Automatically deploy the latest code to GitHub Pages whenever a pull
-#   request (PR) is merged into the main branch.
+#   request (PR) is merged into the dev branch.
 #
 # Workflow Trigger:
-#   - Any push to the 'main' branch (typically PR merge events)
+#   - Any push to the 'dev' branch (typically PR merge events)
 #
 # Deployment Target:
 #   - GitHub Pages (auto-published static site)
@@ -21,12 +21,12 @@ name: Deploy to GitHub Pages
 
 # TRIGGER CONFIGURATION
 # ====================
-# This workflow runs when code is pushed to the main branch
+# This workflow runs when code is pushed to the dev branch
 # (which includes merged pull requests)
 on:
   push:
     branches:
-      - main  # Only trigger on main branch pushes
+      - dev  # Only trigger on dev branch pushes
 
 # PERMISSIONS CONFIGURATION
 # =========================
