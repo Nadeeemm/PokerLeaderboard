@@ -2235,6 +2235,8 @@
 
       <div class="tabs">
         <button class="tab active" onclick="switchTab('overall')">Overall</button>
+        <button class="tab" onclick="switchTab('weekly')">Weekly</button>
+        <button class="tab" onclick="switchTab('monthly')">Monthly</button>
         <button class="tab" onclick="switchTab('pergame')">Per Game</button>
         <button class="tab" onclick="switchTab('users')">Users</button>
         <button class="tab" onclick="switchTab('players')">Players</button>
@@ -2245,6 +2247,20 @@
         <div class="stats-row" id="overall-stats"></div>
         <div class="section-title">All-time standings</div>
         <div id="overall-lb"></div>
+      </div>
+
+      <!-- WEEKLY TAB -->
+      <div class="panel" id="tab-weekly">
+        <div class="section-title">📅 Weekly Performance</div>
+        <div class="game-selector" id="week-selector"></div>
+        <div id="weekly-lb"></div>
+      </div>
+
+      <!-- MONTHLY TAB -->
+      <div class="panel" id="tab-monthly">
+        <div class="section-title">📊 Monthly Performance</div>
+        <div class="game-selector" id="month-selector"></div>
+        <div id="monthly-lb"></div>
       </div>
 
       <!-- PER GAME TAB -->
@@ -2342,13 +2358,27 @@
     let authPendingAction = null;
     const SECRET_CODE = '1108'; // Change this to your secret code
     
-    // Embedded data - no need to fetch from files
-    const embeddedData = {"players":[{"id":"1","name":"Gaurav"},{"id":"2","name":"Vatsal"},{"id":"3","name":"Nadeem"},{"id":"4","name":"Monty"},{"id":"5","name":"Hanu"},{"id":"6","name":"Anush"},{"id":"7","name":"Sam"},{"id":"8","name":"Keshav"},{"id":"9","name":"HeHe"},{"id":"10","name":"Ginni"},{"id":"11","name":"Manku"},{"id":"12","name":"Ritesh"},{"id":"13","name":"Ruchika"},{"id":"14","name":"Simran"},{"id":"15","name":"Sarthak"},{"id":"16","name":"Harsh"}],"games":[{"id":"1","name":"Poker Night April 11th","date":"2026-04-11","results":[{"playerId":"4","playerName":"Monty","type":"win","amount":2653.3},{"playerId":"11","playerName":"Manku","type":"win","amount":2088.7},{"playerId":"5","playerName":"Hanu","type":"win","amount":1533.1},{"playerId":"6","playerName":"Anush","type":"win","amount":422.1},{"playerId":"3","playerName":"Nadeem","type":"win","amount":316.0},{"playerId":"1","playerName":"Gaurav","type":"loss","amount":2750.0},{"playerId":"12","playerName":"Ritesh","type":"loss","amount":1400.0},{"playerId":"8","playerName":"Keshav","type":"loss","amount":1563.2},{"playerId":"10","playerName":"Ginni","type":"loss","amount":1300.0}]},{"id":"2","name":"Poker Night April 12th","date":"2026-04-12","results":[{"playerId":"1","playerName":"Gaurav","type":"win","amount":2602.5},{"playerId":"8","playerName":"Keshav","type":"win","amount":1294.6},{"playerId":"3","playerName":"Nadeem","type":"win","amount":524.0},{"playerId":"12","playerName":"Ritesh","type":"loss","amount":1336.0},{"playerId":"6","playerName":"Anush","type":"loss","amount":1029.6},{"playerId":"7","playerName":"Sam","type":"loss","amount":1000.0},{"playerId":"4","playerName":"Monty","type":"loss","amount":536.0},{"playerId":"9","playerName":"HeHe","type":"loss","amount":200.0},{"playerId":"11","playerName":"Manku","type":"loss","amount":200.0},{"playerId":"14","playerName":"Simran","type":"loss","amount":76.0},{"playerId":"5","playerName":"Hanu","type":"loss","amount":88.0}]},{"id":"3","name":"Poker Night April 13th","date":"2026-04-13","results":[{"playerId":"8","playerName":"Keshav","type":"win","amount":1647.9},{"playerId":"4","playerName":"Monty","type":"win","amount":1608.3},{"playerId":"3","playerName":"Nadeem","type":"win","amount":440.0},{"playerId":"5","playerName":"Hanu","type":"win","amount":334.1},{"playerId":"11","playerName":"Manku","type":"win","amount":276.5},{"playerId":"6","playerName":"Anush","type":"loss","amount":3111.0},{"playerId":"14","playerName":"Simran","type":"loss","amount":385.8},{"playerId":"9","playerName":"HeHe","type":"loss","amount":388.0},{"playerId":"10","playerName":"Ginni","type":"loss","amount":250.0},{"playerId":"1","playerName":"Gaurav","type":"loss","amount":172.0}]},{"id":"4","name":"Poker Night April 14th","date":"2026-04-14","results":[{"playerId":"1","playerName":"Gaurav","type":"win","amount":3496.9},{"playerId":"5","playerName":"Hanu","type":"win","amount":1821.4},{"playerId":"7","playerName":"Sam","type":"win","amount":807.9},{"playerId":"2","playerName":"Vatsal","type":"win","amount":615.7},{"playerId":"3","playerName":"Nadeem","type":"win","amount":41.7},{"playerId":"11","playerName":"Manku","type":"win","amount":10.8},{"playerId":"8","playerName":"Keshav","type":"loss","amount":3000.0},{"playerId":"4","playerName":"Monty","type":"loss","amount":1000.0},{"playerId":"12","playerName":"Ritesh","type":"loss","amount":900.0},{"playerId":"10","playerName":"Ginni","type":"loss","amount":639.7},{"playerId":"13","playerName":"Ruchika","type":"loss","amount":630.0},{"playerId":"6","playerName":"Anush","type":"loss","amount":624.7}]},{"id":"5","name":"Poker Night April 15th","date":"2026-04-15","results":[{"playerId":"4","playerName":"Monty","type":"win","amount":4657.2},{"playerId":"11","playerName":"Manku","type":"win","amount":4061.2},{"playerId":"5","playerName":"Hanu","type":"win","amount":953.4},{"playerId":"1","playerName":"Gaurav","type":"win","amount":1746.6},{"playerId":"9","playerName":"HeHe","type":"loss","amount":1.2},{"playerId":"3","playerName":"Nadeem","type":"loss","amount":1605.0},{"playerId":"8","playerName":"Keshav","type":"loss","amount":3281.7},{"playerId":"10","playerName":"Ginni","type":"loss","amount":165.0},{"playerId":"6","playerName":"Anush","type":"loss","amount":5826.1},{"playerId":"2","playerName":"Vatsal","type":"loss","amount":539.4}]},{"id":"6","name":"Poker Night April 16th","date":"2026-04-16","results":[{"playerId":"1","playerName":"Gaurav","type":"win","amount":1419.8},{"playerId":"2","playerName":"Vatsal","type":"win","amount":1159.9},{"playerId":"3","playerName":"Nadeem","type":"win","amount":1098.0},{"playerId":"4","playerName":"Monty","type":"win","amount":416.7},{"playerId":"5","playerName":"Hanu","type":"win","amount":183.6},{"playerId":"6","playerName":"Anush","type":"loss","amount":1896.0},{"playerId":"7","playerName":"Sam","type":"loss","amount":800.0},{"playerId":"8","playerName":"Keshav","type":"loss","amount":1275.6},{"playerId":"9","playerName":"HeHe","type":"loss","amount":200.0},{"playerId":"10","playerName":"Ginni","type":"loss","amount":106.4}]},{"id":"7","name":"Poker Night April 17th","date":"2026-04-17","results":[{"playerId":"4","playerName":"Monty","type":"win","amount":3594.5},{"playerId":"6","playerName":"Anush","type":"win","amount":530.9},{"playerId":"7","playerName":"Sam","type":"win","amount":397.5},{"playerId":"3","playerName":"Nadeem","type":"win","amount":5.7},{"playerId":"12","playerName":"Ritesh","type":"loss","amount":889.4},{"playerId":"1","playerName":"Gaurav","type":"loss","amount":285.3},{"playerId":"9","playerName":"HeHe","type":"loss","amount":128.3},{"playerId":"13","playerName":"Ruchika","type":"loss","amount":25.6},{"playerId":"15","playerName":"Sarthak","type":"loss","amount":400.0},{"playerId":"11","playerName":"Manku","type":"loss","amount":1100.0},{"playerId":"2","playerName":"Vatsal","type":"loss","amount":1700.0}]},{"id":"8","name":"Poker Night April 18th","date":"2026-04-18","results":[{"playerId":"16","playerName":"Harsh","type":"win","amount":2108.7},{"playerId":"1","playerName":"Gaurav","type":"win","amount":801.3},{"playerId":"3","playerName":"Nadeem","type":"win","amount":305.4},{"playerId":"4","playerName":"Monty","type":"win","amount":14.3},{"playerId":"6","playerName":"Anush","type":"loss","amount":2000.0},{"playerId":"8","playerName":"Keshav","type":"loss","amount":1029.7},{"playerId":"7","playerName":"Sam","type":"loss","amount":200.0}]}]};
-    
     async function loadState() {
       try {
-        const players = embeddedData.players || [];
-        const games = embeddedData.games || [];
+        // Load players from file
+        const playersResponse = await fetch('players.json');
+        if (!playersResponse.ok) throw new Error('Failed to load players.json');
+        const playersData = await playersResponse.json();
+        const players = playersData.players || [];
+
+        // Load games manifest
+        const manifestResponse = await fetch('games-manifest.json');
+        if (!manifestResponse.ok) throw new Error('Failed to load games-manifest.json');
+        const manifestData = await manifestResponse.json();
+        
+        // Load individual game files
+        const games = [];
+        for (const gameInfo of (manifestData.games || [])) {
+          const gameResponse = await fetch(`games/${gameInfo.file}`);
+          if (!gameResponse.ok) throw new Error(`Failed to load ${gameInfo.file}`);
+          const gameData = await gameResponse.json();
+          games.push(gameData);
+        }
         
         state = { players, games, selectedGame: null };
         const selectedDate = localStorage.getItem('selectedGameDate');
@@ -2361,9 +2391,10 @@
           state.selectedGame = state.games.at(-1)?.id || null;
         }
 
-        console.log('State loaded:', state);
+        console.log('✓ State loaded successfully from JSON files:', state);
       } catch (e) {
-        console.error('Error loading state:', e);
+        console.error('✗ Error loading state from files:', e);
+        showToast('Error loading data. Please check console.');
         state = { players: [], games: [], selectedGame: null };
       }
 
@@ -2487,6 +2518,8 @@
       if (di) di.value = new Date().toISOString().slice(0, 10);
       renderPlayers();
       renderOverall();
+      renderWeekly();
+      renderMonthly();
       renderPerGame();
       renderUsers();
       renderHistory();
@@ -2501,6 +2534,8 @@
       event.target.classList.add('active');
       if (t === 'pergame') renderPerGame();
       if (t === 'overall') renderOverall();
+      if (t === 'weekly') renderWeekly();
+      if (t === 'monthly') renderMonthly();
       if (t === 'users') renderUsers();
       if (t === 'players') renderHistory();
     }
@@ -2595,6 +2630,8 @@
         document.getElementById('game-name-input').value = '';
         renderResultRows();
         renderOverall();
+        renderWeekly();
+        renderMonthly();
         renderPerGame();
         renderUsers();
         renderHistory();
@@ -2615,6 +2652,8 @@
       if (state.selectedGame === id) state.selectedGame = state.games.length ? state.games[state.games.length - 1].id : null;
       saveState();
       renderOverall();
+      renderWeekly();
+      renderMonthly();
       renderPerGame();
       renderUsers();
       renderHistory();
@@ -2633,6 +2672,95 @@
         });
       });
       return Object.values(stats).filter(s => s.games > 0).sort((a, b) => b.net - a.net);
+    }
+
+    function getMondayOfWeek(date) {
+      // Returns a new Date set to Monday 00:00:00 of the week containing 'date'
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      const day = d.getDay(); // 0=Sun, 1=Mon ... 6=Sat
+      const diff = (day === 0) ? -6 : 1 - day; // shift to Monday
+      d.setDate(d.getDate() + diff);
+      return d;
+    }
+
+    function getSundayOfWeek(date) {
+      const monday = getMondayOfWeek(date);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      return sunday;
+    }
+
+    function getWeekKey(dateStr) {
+      // Key is the ISO date of the Monday of that week, e.g. "2025-03-31"
+      const date = new Date(dateStr);
+      const monday = getMondayOfWeek(date);
+      return monday.toISOString().slice(0, 10);
+    }
+
+    function formatWeekLabel(weekKey) {
+      // weekKey is Monday's date string "YYYY-MM-DD"
+      const monday = new Date(weekKey);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monLabel = `${monthNames[monday.getMonth()]} ${monday.getDate()}`;
+      const sunLabel = `${monthNames[sunday.getMonth()]} ${sunday.getDate()}`;
+      return `${monLabel} – ${sunLabel}`;
+    }
+
+    function getWeekDateRangeFromGames(weekKey) {
+      // weekKey is already the Monday date string
+      const monday = new Date(weekKey);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      return `${monday.toISOString().slice(0, 10)} - ${sunday.toISOString().slice(0, 10)}`;
+    }
+
+    function getMonthKey(dateStr) {
+      const date = new Date(dateStr);
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+    }
+
+    function getWeeklyStats() {
+      const weeks = {};
+      state.games.forEach(g => {
+        const weekKey = getWeekKey(g.date);
+        if (!weeks[weekKey]) weeks[weekKey] = {};
+        g.results.forEach(r => {
+          if (!weeks[weekKey][r.playerId]) weeks[weekKey][r.playerId] = { name: r.playerName, wins: 0, losses: 0, net: 0, games: 0 };
+          weeks[weekKey][r.playerId].games++;
+          if (r.type === 'win') { weeks[weekKey][r.playerId].wins++; weeks[weekKey][r.playerId].net += r.amount; }
+          else { weeks[weekKey][r.playerId].losses++; weeks[weekKey][r.playerId].net -= r.amount; }
+        });
+      });
+
+      const result = {};
+      Object.entries(weeks).forEach(([weekKey, stats]) => {
+        result[weekKey] = Object.values(stats).filter(s => s.games > 0).sort((a, b) => b.net - a.net);
+      });
+      return result;
+    }
+
+    function getMonthlyStats() {
+      const months = {};
+      state.games.forEach(g => {
+        const monthKey = getMonthKey(g.date);
+        if (!months[monthKey]) months[monthKey] = {};
+        g.results.forEach(r => {
+          if (!months[monthKey][r.playerId]) months[monthKey][r.playerId] = { name: r.playerName, wins: 0, losses: 0, net: 0, games: 0 };
+          months[monthKey][r.playerId].games++;
+          if (r.type === 'win') { months[monthKey][r.playerId].wins++; months[monthKey][r.playerId].net += r.amount; }
+          else { months[monthKey][r.playerId].losses++; months[monthKey][r.playerId].net -= r.amount; }
+        });
+      });
+
+      const result = {};
+      Object.entries(months).forEach(([monthKey, stats]) => {
+        result[monthKey] = Object.values(stats).filter(s => s.games > 0).sort((a, b) => b.net - a.net);
+      });
+      return result;
     }
 
     function renderOverall() {
@@ -2666,6 +2794,118 @@
         </tr>`).join('')}
       </tbody>
     </table>`;
+    }
+
+    function renderWeekly() {
+      const sel = document.getElementById('week-selector');
+      const lb = document.getElementById('weekly-lb');
+      if (!sel || !lb) return;
+      
+      const weeklyStats = getWeeklyStats();
+      const weeks = Object.keys(weeklyStats).sort();
+      
+      if (!weeks.length) {
+        sel.innerHTML = '';
+        lb.innerHTML = '<div class="empty"><div class="card-icon">📅</div>No games yet.<br>Weekly stats coming soon!</div>';
+        return;
+      }
+
+      if (!state.selectedWeek) state.selectedWeek = weeks[weeks.length - 1];
+      
+      sel.innerHTML = weeks.map(week => `
+      <div class="game-pill ${state.selectedWeek === week ? 'active' : ''}" onclick="selectWeek('${week}')">${formatWeekLabel(week)}</div>`).join('');
+      
+      const stats = weeklyStats[state.selectedWeek] || [];
+      const dateRange = getWeekDateRangeFromGames(state.selectedWeek);
+      
+      if (!stats.length) {
+        lb.innerHTML = '<div class="empty"><div class="card-icon">📊</div>No games this week.</div>';
+        return;
+      }
+
+      lb.innerHTML = `
+      <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${formatWeekLabel(state.selectedWeek)}</span>
+        <span style="font-size:11px;color:rgba(232,224,200,0.4)">${dateRange}</span>
+      </div>
+      <table class="lb-table">
+        <thead><tr>
+          <th style="width:36px">#</th>
+          <th>Player</th>
+          <th>W/L</th>
+          <th style="text-align:right">Net</th>
+        </tr></thead>
+        <tbody>${stats.map((s, i) => `
+          <tr class="lb-row">
+            <td><div class="rank-badge rank-${i < 3 ? i + 1 : 'other'}">${i + 1}</div></td>
+            <td class="player-name">${s.name}</td>
+            <td><span class="wins">▲${s.wins}</span> <span class="losses">▼${s.losses}</span></td>
+            <td style="text-align:right" class="${s.net > 0 ? 'net-pos' : s.net < 0 ? 'net-neg' : 'net-zero'}">
+              ${s.net > 0 ? '+' : ''}${s.net.toFixed(0)}
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+    }
+
+    function renderMonthly() {
+      const sel = document.getElementById('month-selector');
+      const lb = document.getElementById('monthly-lb');
+      if (!sel || !lb) return;
+      
+      const monthlyStats = getMonthlyStats();
+      const months = Object.keys(monthlyStats).sort().reverse();
+      
+      if (!months.length) {
+        sel.innerHTML = '';
+        lb.innerHTML = '<div class="empty"><div class="card-icon">📊</div>No games yet.<br>Monthly stats coming soon!</div>';
+        return;
+      }
+
+      if (!state.selectedMonth) state.selectedMonth = months[0];
+      
+      sel.innerHTML = months.map(month => `
+      <div class="game-pill ${state.selectedMonth === month ? 'active' : ''}" onclick="selectMonth('${month}')">${month}</div>`).join('');
+      
+      const stats = monthlyStats[state.selectedMonth] || [];
+      
+      if (!stats.length) {
+        lb.innerHTML = '<div class="empty"><div class="card-icon">📊</div>No games this month.</div>';
+        return;
+      }
+
+      lb.innerHTML = `
+      <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${state.selectedMonth} Standings</span>
+      </div>
+      <table class="lb-table">
+        <thead><tr>
+          <th style="width:36px">#</th>
+          <th>Player</th>
+          <th>W/L</th>
+          <th style="text-align:right">Net</th>
+        </tr></thead>
+        <tbody>${stats.map((s, i) => `
+          <tr class="lb-row">
+            <td><div class="rank-badge rank-${i < 3 ? i + 1 : 'other'}">${i + 1}</div></td>
+            <td class="player-name">${s.name}</td>
+            <td><span class="wins">▲${s.wins}</span> <span class="losses">▼${s.losses}</span></td>
+            <td style="text-align:right" class="${s.net > 0 ? 'net-pos' : s.net < 0 ? 'net-neg' : 'net-zero'}">
+              ${s.net > 0 ? '+' : ''}${s.net.toFixed(0)}
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+    }
+
+    function selectWeek(week) {
+      state.selectedWeek = week;
+      renderWeekly();
+    }
+
+    function selectMonth(month) {
+      state.selectedMonth = month;
+      renderMonthly();
     }
 
     function renderUsers() {
@@ -2776,133 +3016,6 @@
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 2500);
     }
-
-    // Fallback data if data.json cannot be loaded
-    window.fallbackData = {
-      "players": [
-        { "id": "1", "name": "Gaurav" },
-        { "id": "2", "name": "Vatsal" },
-        { "id": "3", "name": "Nadeem" },
-        { "id": "4", "name": "Monty" },
-        { "id": "5", "name": "Hanu" },
-        { "id": "6", "name": "Anush" },
-        { "id": "7", "name": "Sam" },
-        { "id": "8", "name": "Keshav" },
-        { "id": "9", "name": "HeHe" },
-        { "id": "10", "name": "Ginni" },
-        { "id": "11", "name": "Manku" },
-        { "id": "12", "name": "Ritesh" },
-        { "id": "13", "name": "Ruchika" },
-        { "id": "14", "name": "Simran" }
-      ],
-      "games": [
-        {
-          "id": "1",
-          "name": "Poker Night April 16th",
-          "date": "2026-04-16",
-          "results": [
-            { "playerId": "1", "playerName": "Gaurav", "type": "win", "amount": 1419.8 },
-            { "playerId": "2", "playerName": "Vatsal", "type": "win", "amount": 1159.9 },
-            { "playerId": "3", "playerName": "Nadeem", "type": "win", "amount": 1098.0 },
-            { "playerId": "4", "playerName": "Monty", "type": "win", "amount": 416.7 },
-            { "playerId": "5", "playerName": "Hanu", "type": "win", "amount": 183.6 },
-            { "playerId": "6", "playerName": "Anush", "type": "loss", "amount": 1896.0 },
-            { "playerId": "7", "playerName": "Sam", "type": "loss", "amount": 800.0 },
-            { "playerId": "8", "playerName": "Keshav", "type": "loss", "amount": 1275.6 },
-            { "playerId": "9", "playerName": "HeHe", "type": "loss", "amount": 200.0 },
-            { "playerId": "10", "playerName": "Ginni", "type": "loss", "amount": 106.4 }
-          ]
-        },
-        {
-          "id": "2",
-          "name": "Poker Night April 15th",
-          "date": "2026-04-15",
-          "results": [
-            { "playerId": "4", "playerName": "Monty", "type": "win", "amount": 4657.2 },
-            { "playerId": "11", "playerName": "Manku", "type": "win", "amount": 4061.2 },
-            { "playerId": "5", "playerName": "Hanu", "type": "win", "amount": 953.4 },
-            { "playerId": "1", "playerName": "Gaurav", "type": "win", "amount": 1746.6 },
-            { "playerId": "9", "playerName": "HeHe", "type": "loss", "amount": 1.2 },
-            { "playerId": "3", "playerName": "Nadeem", "type": "loss", "amount": 1605.0 },
-            { "playerId": "8", "playerName": "Keshav", "type": "loss", "amount": 3281.7 },
-            { "playerId": "10", "playerName": "Ginni", "type": "loss", "amount": 165.0 },
-            { "playerId": "6", "playerName": "Anush", "type": "loss", "amount": 5826.1 },
-            { "playerId": "2", "playerName": "Vatsal", "type": "loss", "amount": 539.4 }
-          ]
-        },
-        {
-          "id": "3",
-          "name": "Poker Night April 14th",
-          "date": "2026-04-14",
-          "results": [
-            { "playerId": "1", "playerName": "Gaurav", "type": "win", "amount": 3496.9 },
-            { "playerId": "5", "playerName": "Hanu", "type": "win", "amount": 1821.4 },
-            { "playerId": "7", "playerName": "Sam", "type": "win", "amount": 807.9 },
-            { "playerId": "2", "playerName": "Vatsal", "type": "win", "amount": 615.7 },
-            { "playerId": "3", "playerName": "Nadeem", "type": "win", "amount": 41.7 },
-            { "playerId": "11", "playerName": "Manku", "type": "win", "amount": 10.8 },
-            { "playerId": "8", "playerName": "Keshav", "type": "loss", "amount": 3000.0 },
-            { "playerId": "4", "playerName": "Monty", "type": "loss", "amount": 1000.0 },
-            { "playerId": "12", "playerName": "Ritesh", "type": "loss", "amount": 900.0 },
-            { "playerId": "10", "playerName": "Ginni", "type": "loss", "amount": 639.7 },
-            { "playerId": "13", "playerName": "Ruchika", "type": "loss", "amount": 630.0 },
-            { "playerId": "6", "playerName": "Anush", "type": "loss", "amount": 624.7 }
-          ]
-        },
-        {
-          "id": "4",
-          "name": "Poker Night April 13th",
-          "date": "2026-04-13",
-          "results": [
-            { "playerId": "8", "playerName": "Keshav", "type": "win", "amount": 1647.9 },
-            { "playerId": "4", "playerName": "Monty", "type": "win", "amount": 1608.3 },
-            { "playerId": "3", "playerName": "Nadeem", "type": "win", "amount": 440.0 },
-            { "playerId": "5", "playerName": "Hanu", "type": "win", "amount": 334.1 },
-            { "playerId": "11", "playerName": "Manku", "type": "win", "amount": 276.5 },
-            { "playerId": "6", "playerName": "Anush", "type": "loss", "amount": 3111.0 },
-            { "playerId": "14", "playerName": "Simran", "type": "loss", "amount": 385.8 },
-            { "playerId": "9", "playerName": "HeHe", "type": "loss", "amount": 388.0 },
-            { "playerId": "10", "playerName": "Ginni", "type": "loss", "amount": 250.0 },
-            { "playerId": "1", "playerName": "Gaurav", "type": "loss", "amount": 172.0 }
-          ]
-        },
-        {
-          "id": "5",
-          "name": "Poker Night April 12th",
-          "date": "2026-04-12",
-          "results": [
-            { "playerId": "1", "playerName": "Gaurav", "type": "win", "amount": 2602.5 },
-            { "playerId": "8", "playerName": "Keshav", "type": "win", "amount": 1294.6 },
-            { "playerId": "3", "playerName": "Nadeem", "type": "win", "amount": 524.0 },
-            { "playerId": "12", "playerName": "Ritesh", "type": "loss", "amount": 1336.0 },
-            { "playerId": "6", "playerName": "Anush", "type": "loss", "amount": 1029.6 },
-            { "playerId": "7", "playerName": "Sam", "type": "loss", "amount": 1000.0 },
-            { "playerId": "4", "playerName": "Monty", "type": "loss", "amount": 536.0 },
-            { "playerId": "9", "playerName": "HeHe", "type": "loss", "amount": 200.0 },
-            { "playerId": "11", "playerName": "Manku", "type": "loss", "amount": 200.0 },
-            { "playerId": "14", "playerName": "Simran", "type": "loss", "amount": 76.0 },
-            { "playerId": "5", "playerName": "Hanu", "type": "loss", "amount": 88.0 }
-          ]
-        },
-        {
-          "id": "6",
-          "name": "Poker Night April 11th",
-          "date": "2026-04-11",
-          "results": [
-            { "playerId": "4", "playerName": "Monty", "type": "win", "amount": 2653.3 },
-            { "playerId": "11", "playerName": "Manku", "type": "win", "amount": 2088.7 },
-            { "playerId": "5", "playerName": "Hanu", "type": "win", "amount": 1533.1 },
-            { "playerId": "6", "playerName": "Anush", "type": "win", "amount": 422.1 },
-            { "playerId": "3", "playerName": "Nadeem", "type": "win", "amount": 316.0 },
-            { "playerId": "1", "playerName": "Gaurav", "type": "loss", "amount": 2750.0 },
-            { "playerId": "12", "playerName": "Ritesh", "type": "loss", "amount": 1400.0 },
-            { "playerId": "8", "playerName": "Keshav", "type": "loss", "amount": 1563.2 },
-            { "playerId": "10", "playerName": "Ginni", "type": "loss", "amount": 1300.0 }
-          ]
-        }
-      ],
-      "selectedGame": "1"
-    };
 
     function createSparkles(event) {
       const x = event.clientX;

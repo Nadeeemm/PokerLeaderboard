@@ -47,6 +47,66 @@
       "name": "Poker Night April 18th",
       "date": "2026-04-18",
       "file": "game-8.json"
+    },
+    {
+      "id": "9",
+      "name": "Poker Night April 19th",
+      "date": "2026-04-19",
+      "file": "game-9.json"
+    },
+    {
+      "id": "10",
+      "name": "Poker Night April 20th",
+      "date": "2026-04-20",
+      "file": "game-10.json"
+    },
+    {
+      "id": "11",
+      "name": "Poker Night April 21st",
+      "date": "2026-04-21",
+      "file": "game-11.json"
+    },
+    {
+      "id": "12",
+      "name": "Poker Night April 22nd",
+      "date": "2026-04-22",
+      "file": "game-12.json"
+    },
+    {
+      "id": "13",
+      "name": "Poker Night April 24th",
+      "date": "2026-04-24",
+      "file": "game-13.json"
+    },
+    {
+      "id": "14",
+      "name": "Poker Night April 25th",
+      "date": "2026-04-25",
+      "file": "game-14.json"
+    },
+    {
+      "id": "15",
+      "name": "Poker Night April 26th",
+      "date": "2026-04-26",
+      "file": "game-15.json"
+    },
+    {
+      "id": "16",
+      "name": "Poker Night April 27th",
+      "date": "2026-04-27",
+      "file": "game-16.json"
+    },
+    {
+      "id": "17",
+      "name": "Poker Night April 30th",
+      "date": "2026-04-30",
+      "file": "game-17.json"
+    },
+    {
+      "id": "18",
+      "name": "Poker Night May 1st",
+      "date": "2026-05-01",
+      "file": "game-18.json"
     }
   ]
 }
