@@ -95,11 +95,18 @@
       "name": "Poker Night April 27th",
       "date": "2026-04-27",
       "file": "game-16.json"
-    },{
+    },
+    {
       "id": "17",
       "name": "Poker Night April 30th",
       "date": "2026-04-30",
       "file": "game-17.json"
+    },
+    {
+      "id": "18",
+      "name": "Poker Night May 1st",
+      "date": "2026-05-01",
+      "file": "game-18.json"
     }
   ]
 }
