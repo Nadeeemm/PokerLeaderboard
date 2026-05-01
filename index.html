@@ -2674,34 +2674,47 @@
       return Object.values(stats).filter(s => s.games > 0).sort((a, b) => b.net - a.net);
     }
 
+    function getMondayOfWeek(date) {
+      // Returns a new Date set to Monday 00:00:00 of the week containing 'date'
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      const day = d.getDay(); // 0=Sun, 1=Mon ... 6=Sat
+      const diff = (day === 0) ? -6 : 1 - day; // shift to Monday
+      d.setDate(d.getDate() + diff);
+      return d;
+    }
+
+    function getSundayOfWeek(date) {
+      const monday = getMondayOfWeek(date);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      return sunday;
+    }
+
     function getWeekKey(dateStr) {
+      // Key is the ISO date of the Monday of that week, e.g. "2025-03-31"
       const date = new Date(dateStr);
+      const monday = getMondayOfWeek(date);
+      return monday.toISOString().slice(0, 10);
+    }
+
+    function formatWeekLabel(weekKey) {
+      // weekKey is Monday's date string "YYYY-MM-DD"
+      const monday = new Date(weekKey);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const monthName = monthNames[date.getMonth()];
-      const dayOfMonth = date.getDate();
-      const weekOfMonth = Math.ceil(dayOfMonth / 7);
-      const weekNames = ['1st', '2nd', '3rd', '4th', '5th'];
-      return `${monthName}-${weekNames[weekOfMonth - 1]} week`;
+      const monLabel = `${monthNames[monday.getMonth()]} ${monday.getDate()}`;
+      const sunLabel = `${monthNames[sunday.getMonth()]} ${sunday.getDate()}`;
+      return `${monLabel} – ${sunLabel}`;
     }
 
     function getWeekDateRangeFromGames(weekKey) {
-      // Find a game in this week to get the correct year
-      for (const game of state.games) {
-        if (getWeekKey(game.date) === weekKey) {
-          const date = new Date(game.date);
-          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-          const monthName = monthNames[date.getMonth()];
-          const weekPart = weekKey.split('-')[1];
-          const weekNumber = parseInt(weekPart);
-          
-          const startDate = new Date(date.getFullYear(), date.getMonth(), (weekNumber - 1) * 7 + 1);
-          const endDate = new Date(date.getFullYear(), date.getMonth(), weekNumber * 7);
-          
-          const formatDate = (d) => d.toISOString().slice(0, 10);
-          return `${formatDate(startDate)} - ${formatDate(endDate)}`;
-        }
-      }
-      return '';
+      // weekKey is already the Monday date string
+      const monday = new Date(weekKey);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      return `${monday.toISOString().slice(0, 10)} - ${sunday.toISOString().slice(0, 10)}`;
     }
 
     function getMonthKey(dateStr) {
@@ -2800,7 +2813,7 @@
       if (!state.selectedWeek) state.selectedWeek = weeks[weeks.length - 1];
       
       sel.innerHTML = weeks.map(week => `
-      <div class="game-pill ${state.selectedWeek === week ? 'active' : ''}" onclick="selectWeek('${week}')">${week}</div>`).join('');
+      <div class="game-pill ${state.selectedWeek === week ? 'active' : ''}" onclick="selectWeek('${week}')">${formatWeekLabel(week)}</div>`).join('');
       
       const stats = weeklyStats[state.selectedWeek] || [];
       const dateRange = getWeekDateRangeFromGames(state.selectedWeek);
@@ -2812,7 +2825,7 @@
 
       lb.innerHTML = `
       <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${state.selectedWeek}</span>
+        <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${formatWeekLabel(state.selectedWeek)}</span>
         <span style="font-size:11px;color:rgba(232,224,200,0.4)">${dateRange}</span>
       </div>
       <table class="lb-table">
