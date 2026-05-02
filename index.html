@@ -2221,6 +2221,122 @@
         max-height: 95vh;
       }
     }
+
+    /* Settlement Styles */
+    .settlement-game-card {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin: 0 1rem 1.2rem;
+      box-shadow: 0 8px 24px rgba(201, 151, 58, 0.2);
+      animation: slideInUp 0.5s ease;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .settlement-game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .settlement-game-name {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 14px;
+      color: var(--gold2);
+      font-weight: bold;
+    }
+
+    .settlement-game-date {
+      font-size: 12px;
+      color: rgba(232, 224, 200, 0.5);
+    }
+
+    .settlement-transaction {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem;
+      margin-bottom: 0.6rem;
+      background: rgba(201, 151, 58, 0.1);
+      border-radius: 8px;
+      border-left: 3px solid var(--gold);
+      transition: all 0.2s ease;
+    }
+
+    .settlement-transaction:hover {
+      background: rgba(201, 151, 58, 0.2);
+      transform: translateX(4px);
+      box-shadow: inset 0 0 10px rgba(201, 151, 58, 0.15);
+    }
+
+    .settlement-flow {
+      font-size: 13px;
+      color: rgba(232, 224, 200, 0.8);
+      flex: 1;
+    }
+
+    .settlement-amount {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 14px;
+      font-weight: bold;
+      color: #e74c3c;
+      text-shadow: 0 0 8px rgba(231, 76, 60, 0.3);
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .settlement-empty {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: rgba(232, 224, 200, 0.4);
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .settlement-game-card {
+        margin: 0 0 1rem;
+        padding: 1rem;
+      }
+
+      .settlement-game-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.6rem;
+      }
+
+      .settlement-game-name {
+        font-size: 13px;
+      }
+
+      .settlement-transaction {
+        padding: 0.6rem;
+        font-size: 12px;
+      }
+
+      .settlement-flow {
+        font-size: 12px;
+      }
+
+      .settlement-amount {
+        font-size: 13px;
+      }
+    }
   </style>
 
   <div class="app">
@@ -2235,11 +2351,11 @@
 
       <div class="tabs">
         <button class="tab active" onclick="switchTab('overall')">Overall</button>
-        <button class="tab" onclick="switchTab('weekly')">Weekly</button>
         <button class="tab" onclick="switchTab('monthly')">Monthly</button>
         <button class="tab" onclick="switchTab('pergame')">Per Game</button>
         <button class="tab" onclick="switchTab('users')">Users</button>
-        <button class="tab" onclick="switchTab('players')">Players</button>
+        <button class="tab" onclick="switchTab('settlement')">Settlement</button>
+        <button class="tab" onclick="requireAuth('add-game-form', 'Add new game - Admin required')">➕ Add Game</button>
       </div>
 
       <!-- OVERALL TAB -->
@@ -2249,12 +2365,6 @@
         <div id="overall-lb"></div>
       </div>
 
-      <!-- WEEKLY TAB -->
-      <div class="panel" id="tab-weekly">
-        <div class="section-title">📅 Weekly Performance</div>
-        <div class="game-selector" id="week-selector"></div>
-        <div id="weekly-lb"></div>
-      </div>
 
       <!-- MONTHLY TAB -->
       <div class="panel" id="tab-monthly">
@@ -2276,19 +2386,60 @@
         <div class="users-grid" id="users-grid"></div>
       </div>
 
-      <!-- PLAYERS TAB -->
-      <div class="panel" id="tab-players">
-        <div class="section-title">Roster</div>
-        <div class="form-card">
-          <div class="add-player-row">
-            <input type="text" id="new-player-input" placeholder="Player name..."
-              onkeydown="if(event.key==='Enter')requireAuth('add-player','Add new player?')" />
-            <button class="btn-add" onclick="requireAuth('add-player','Add new player?')">+</button>
+      <!-- SETTLEMENT TAB -->
+      <div class="panel" id="tab-settlement">
+        <div class="section-title">💳 Settlement Summary</div>
+        <div id="settlement-verification" style="margin: 0 1rem 1rem; padding: 1rem; border-radius: 12px; border: 2px solid var(--gold); background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); font-size: 13px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div style="text-align: center;">
+              <div style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Total Losses</div>
+              <div id="settlement-total-loss" style="font-size: 20px; font-weight: bold; color: #e74c3c;">0</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Total Profits</div>
+              <div id="settlement-total-profit" style="font-size: 20px; font-weight: bold; color: #27ae60;">0</div>
+            </div>
           </div>
-          <div class="players-row" id="players-list"></div>
+          <div style="text-align: center; padding: 0.8rem; background: rgba(201, 151, 58, 0.15); border-radius: 8px; border: 1px solid var(--gold);">
+            <div style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Balance Check</div>
+            <div id="settlement-balance-check" style="font-size: 16px; font-weight: bold; color: var(--gold2);">✓ Balanced</div>
+          </div>
         </div>
-        <div class="section-title">Game history</div>
-        <div id="game-history"></div>
+        <div class="section-title">Transactions by Game</div>
+        <div id="settlement-transactions"></div>
+      </div>
+
+      <!-- ADD GAME FORM TAB -->
+      <div class="panel" id="tab-addgame">
+        <div class="section-title">➕ Add New Game</div>
+        <div style="margin: 1.5rem 1rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); border: 2px solid var(--gold); border-radius: 12px;">
+          <div class="form-row">
+            <div class="field" style="flex: 1;">
+              <label>Game Name</label>
+              <input type="text" id="add-game-name" placeholder="e.g., POKER NIGHT MAY 2ND" style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:10px;font-size:14px;width:100%;font-family:'Crimson Pro',serif;" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field" style="flex: 1;">
+              <label>Game Date</label>
+              <input type="date" id="add-game-date" style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:10px;font-size:14px;width:100%;font-family:'Crimson Pro',serif;" />
+            </div>
+          </div>
+        </div>
+
+        <div style="margin: 1.5rem 1rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); border: 2px solid var(--gold); border-radius: 12px;">
+          <div class="section-title" style="margin-bottom: 1rem;">Player Results</div>
+          <div id="add-game-players" style="display:grid; gap: 1rem;"></div>
+        </div>
+
+        <div style="margin: 1.5rem 1rem; display: flex; gap: 1rem; justify-content: center;">
+          <button onclick="submitAddGame()" style="padding:12px 24px; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
+            ✓ Submit Game
+          </button>
+          <button onclick="resetAddGameForm()" style="padding:12px 24px; background: rgba(201,151,58,0.2); color: var(--gold); border: 1px solid var(--gold); border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
+            ⟲ Reset
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -2357,7 +2508,9 @@
     let isAuthenticated = false;
     let authPendingAction = null;
     const SECRET_CODE = '1108'; // Change this to your secret code
-    
+    const SERVER_UPLOAD_URL = null; // Set to your backend URL if you have one: 'http://localhost:3000/upload'
+    let playerEntries = {}; // Stores multiple entries per player: { playerId: [{amount, result}, ...] }
+
     async function loadState() {
       try {
         // Load players from file
@@ -2370,7 +2523,7 @@
         const manifestResponse = await fetch('games-manifest.json');
         if (!manifestResponse.ok) throw new Error('Failed to load games-manifest.json');
         const manifestData = await manifestResponse.json();
-        
+
         // Load individual game files
         const games = [];
         for (const gameInfo of (manifestData.games || [])) {
@@ -2379,7 +2532,7 @@
           const gameData = await gameResponse.json();
           games.push(gameData);
         }
-        
+
         state = { players, games, selectedGame: null };
         const selectedDate = localStorage.getItem('selectedGameDate');
 
@@ -2427,10 +2580,10 @@
         // Generate game file name based on game index
         const gameIndex = state.games.findIndex(g => g.id === game.id) + 1;
         const gameFileName = `game-${gameIndex}.json`;
-        
+
         // Log the game data that should be saved
         console.log(`Game file to save (${gameFileName}):`, JSON.stringify(game, null, 2));
-        
+
         // For demonstration, also download the game file
         const dataStr = JSON.stringify(game, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
@@ -2511,18 +2664,51 @@
         removePlayer(id);
       }
       else if (action === 'add-game') saveGame();
+      else if (action === 'add-game-form') {
+        switchTabDirect('addgame');
+      }
+    }
+
+    function getOrdinal(n) {
+      const s = ['th','st','nd','rd'], v = n % 100;
+      return n + (s[(v-20)%10] || s[v] || s[0]);
+    }
+
+    function defaultGameName(dateStr) {
+      const d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
+      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return `Poker Night ${months[d.getMonth()]} ${getOrdinal(d.getDate())}`;
     }
 
     function init() {
       const di = document.getElementById('game-date-input');
       if (di) di.value = new Date().toISOString().slice(0, 10);
+      const addGameDate = document.getElementById('add-game-date');
+      const addGameName = document.getElementById('add-game-name');
+      const today = new Date().toISOString().slice(0, 10);
+      if (addGameDate) {
+        addGameDate.value = today;
+        addGameDate.addEventListener('change', function() {
+          if (addGameName && (!addGameName.value || addGameName.dataset.auto === 'true')) {
+            addGameName.value = defaultGameName(this.value);
+            addGameName.dataset.auto = 'true';
+          }
+        });
+      }
+      if (addGameName) {
+        addGameName.value = defaultGameName(today);
+        addGameName.dataset.auto = 'true';
+        addGameName.addEventListener('input', function() {
+          this.dataset.auto = 'false';
+        });
+      }
       renderPlayers();
       renderOverall();
-      renderWeekly();
       renderMonthly();
       renderPerGame();
       renderUsers();
-      renderHistory();
+      renderSettlement();
+      renderAddGameForm();
       renderResultRows();
       if (!state.selectedGame && state.games.length > 0) state.selectedGame = state.games[state.games.length - 1].id;
     }
@@ -2534,10 +2720,10 @@
       event.target.classList.add('active');
       if (t === 'pergame') renderPerGame();
       if (t === 'overall') renderOverall();
-      if (t === 'weekly') renderWeekly();
       if (t === 'monthly') renderMonthly();
       if (t === 'users') renderUsers();
-      if (t === 'players') renderHistory();
+      if (t === 'settlement') renderSettlement();
+      if (t === 'addgame') renderAddGameForm();
     }
 
     function addPlayer() {
@@ -2564,7 +2750,7 @@
       const el = document.getElementById('players-list');
       if (!el) return;
       if (!state.players.length) { el.innerHTML = '<span style="font-size:13px;color:rgba(232,224,200,0.4)">No players yet</span>'; return; }
-      el.innerHTML = state.players.map(p => `
+      el.innerHTML = [...state.players].sort((a,b) => a.name.localeCompare(b.name)).map(p => `
       <div class="player-chip">
         ${p.name}
         <span class="remove" onclick="requireAuth('remove-player-${p.id}', 'Remove player?')">✕</span>
@@ -2575,7 +2761,7 @@
       const el = document.getElementById('result-rows');
       if (!el) return;
       if (!state.players.length) { el.innerHTML = '<div style="color:rgba(232,224,200,0.4);font-size:13px;padding:8px 0">Add players first in the Players tab.</div>'; return; }
-      el.innerHTML = state.players.map(p => `
+      el.innerHTML = [...state.players].sort((a,b) => a.name.localeCompare(b.name)).map(p => `
       <div class="form-row" style="align-items:center;margin-bottom:8px">
         <div class="field" style="flex:1.5;font-size:14px;padding-top:4px">${p.name}</div>
         <div class="field" style="flex:0.5">
@@ -2621,20 +2807,19 @@
         const game = { id: gameId, name, date, results };
         state.games.push(game);
         state.selectedGame = game.id;
-        
+
         // Save the individual game file
         saveGameFile(game);
-        
+
         // Update state
         saveState();
         document.getElementById('game-name-input').value = '';
         renderResultRows();
         renderOverall();
-        renderWeekly();
         renderMonthly();
         renderPerGame();
         renderUsers();
-        renderHistory();
+        renderSettlement();
         showToast('Game saved! Chips counted.');
         switchTabTo('overall');
       }
@@ -2652,11 +2837,10 @@
       if (state.selectedGame === id) state.selectedGame = state.games.length ? state.games[state.games.length - 1].id : null;
       saveState();
       renderOverall();
-      renderWeekly();
       renderMonthly();
       renderPerGame();
       renderUsers();
-      renderHistory();
+      renderSettlement();
       showToast('Game removed.');
     }
 
@@ -2723,26 +2907,6 @@
       return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
     }
 
-    function getWeeklyStats() {
-      const weeks = {};
-      state.games.forEach(g => {
-        const weekKey = getWeekKey(g.date);
-        if (!weeks[weekKey]) weeks[weekKey] = {};
-        g.results.forEach(r => {
-          if (!weeks[weekKey][r.playerId]) weeks[weekKey][r.playerId] = { name: r.playerName, wins: 0, losses: 0, net: 0, games: 0 };
-          weeks[weekKey][r.playerId].games++;
-          if (r.type === 'win') { weeks[weekKey][r.playerId].wins++; weeks[weekKey][r.playerId].net += r.amount; }
-          else { weeks[weekKey][r.playerId].losses++; weeks[weekKey][r.playerId].net -= r.amount; }
-        });
-      });
-
-      const result = {};
-      Object.entries(weeks).forEach(([weekKey, stats]) => {
-        result[weekKey] = Object.values(stats).filter(s => s.games > 0).sort((a, b) => b.net - a.net);
-      });
-      return result;
-    }
-
     function getMonthlyStats() {
       const months = {};
       state.games.forEach(g => {
@@ -2796,66 +2960,14 @@
     </table>`;
     }
 
-    function renderWeekly() {
-      const sel = document.getElementById('week-selector');
-      const lb = document.getElementById('weekly-lb');
-      if (!sel || !lb) return;
-      
-      const weeklyStats = getWeeklyStats();
-      const weeks = Object.keys(weeklyStats).sort();
-      
-      if (!weeks.length) {
-        sel.innerHTML = '';
-        lb.innerHTML = '<div class="empty"><div class="card-icon">📅</div>No games yet.<br>Weekly stats coming soon!</div>';
-        return;
-      }
-
-      if (!state.selectedWeek) state.selectedWeek = weeks[weeks.length - 1];
-      
-      sel.innerHTML = weeks.map(week => `
-      <div class="game-pill ${state.selectedWeek === week ? 'active' : ''}" onclick="selectWeek('${week}')">${formatWeekLabel(week)}</div>`).join('');
-      
-      const stats = weeklyStats[state.selectedWeek] || [];
-      const dateRange = getWeekDateRangeFromGames(state.selectedWeek);
-      
-      if (!stats.length) {
-        lb.innerHTML = '<div class="empty"><div class="card-icon">📊</div>No games this week.</div>';
-        return;
-      }
-
-      lb.innerHTML = `
-      <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${formatWeekLabel(state.selectedWeek)}</span>
-        <span style="font-size:11px;color:rgba(232,224,200,0.4)">${dateRange}</span>
-      </div>
-      <table class="lb-table">
-        <thead><tr>
-          <th style="width:36px">#</th>
-          <th>Player</th>
-          <th>W/L</th>
-          <th style="text-align:right">Net</th>
-        </tr></thead>
-        <tbody>${stats.map((s, i) => `
-          <tr class="lb-row">
-            <td><div class="rank-badge rank-${i < 3 ? i + 1 : 'other'}">${i + 1}</div></td>
-            <td class="player-name">${s.name}</td>
-            <td><span class="wins">▲${s.wins}</span> <span class="losses">▼${s.losses}</span></td>
-            <td style="text-align:right" class="${s.net > 0 ? 'net-pos' : s.net < 0 ? 'net-neg' : 'net-zero'}">
-              ${s.net > 0 ? '+' : ''}${s.net.toFixed(0)}
-            </td>
-          </tr>`).join('')}
-        </tbody>
-      </table>`;
-    }
-
     function renderMonthly() {
       const sel = document.getElementById('month-selector');
       const lb = document.getElementById('monthly-lb');
       if (!sel || !lb) return;
-      
+
       const monthlyStats = getMonthlyStats();
       const months = Object.keys(monthlyStats).sort().reverse();
-      
+
       if (!months.length) {
         sel.innerHTML = '';
         lb.innerHTML = '<div class="empty"><div class="card-icon">📊</div>No games yet.<br>Monthly stats coming soon!</div>';
@@ -2863,12 +2975,12 @@
       }
 
       if (!state.selectedMonth) state.selectedMonth = months[0];
-      
+
       sel.innerHTML = months.map(month => `
       <div class="game-pill ${state.selectedMonth === month ? 'active' : ''}" onclick="selectMonth('${month}')">${month}</div>`).join('');
-      
+
       const stats = monthlyStats[state.selectedMonth] || [];
-      
+
       if (!stats.length) {
         lb.innerHTML = '<div class="empty"><div class="card-icon">📊</div>No games this month.</div>';
         return;
@@ -2897,12 +3009,6 @@
         </tbody>
       </table>`;
     }
-
-    function selectWeek(week) {
-      state.selectedWeek = week;
-      renderWeekly();
-    }
-
     function selectMonth(month) {
       state.selectedMonth = month;
       renderMonthly();
@@ -3010,6 +3116,178 @@
       }).join('');
     }
 
+    /**
+     * Calculate settlements for all games
+     * Uses an efficient algorithm:
+     * For each game, calculate player nets, then determine transactions
+     * to balance all accounts (minimum number of transactions)
+     */
+    function calculateSettlements() {
+      const settlements = []; // Array of { game, transactions: [{payer, payee, amount}] }
+      let totalLosses = 0;
+      let totalProfits = 0;
+
+      state.games.forEach(game => {
+        // Calculate net for each player in this game
+        const playerNets = {};
+        game.results.forEach(result => {
+          if (!playerNets[result.playerName]) {
+            playerNets[result.playerName] = 0;
+          }
+          if (result.type === 'win') {
+            playerNets[result.playerName] += result.amount;
+            totalProfits += result.amount;
+          } else {
+            playerNets[result.playerName] -= result.amount;
+            totalLosses += result.amount;
+          }
+        });
+
+        // Generate transactions using efficient algorithm
+        const transactions = settleGame(playerNets);
+        settlements.push({
+          game: game,
+          transactions: transactions
+        });
+      });
+
+      return {
+        settlements,
+        totalLosses: Math.round(totalLosses * 100) / 100,
+        totalProfits: Math.round(totalProfits * 100) / 100,
+        isBalanced: Math.abs(totalLosses - totalProfits) < 0.01
+      };
+    }
+
+    /**
+     * Settlement algorithm for a single game
+     * Takes player nets and returns array of transactions
+     * Ensures creditors get paid and debtors pay minimum transactions
+     */
+    function settleGame(playerNets) {
+      const transactions = [];
+      
+      // Separate creditors (positive net) and debtors (negative net)
+      const creditors = []; // { name, amount }
+      const debtors = [];   // { name, amount }
+
+      Object.entries(playerNets).forEach(([name, net]) => {
+        if (net > 0.01) {
+          creditors.push({ name, amount: Math.round(net * 100) / 100 });
+        } else if (net < -0.01) {
+          debtors.push({ name, amount: Math.round(-net * 100) / 100 });
+        }
+      });
+
+      // Match debtors with creditors
+      let debtorIdx = 0;
+      let creditorIdx = 0;
+
+      while (debtorIdx < debtors.length && creditorIdx < creditors.length) {
+        const debtor = debtors[debtorIdx];
+        const creditor = creditors[creditorIdx];
+
+        // Calculate transaction amount (minimum of what debtor owes and creditor is owed)
+        const transactionAmount = Math.min(debtor.amount, creditor.amount);
+
+        // Record transaction
+        transactions.push({
+          payer: debtor.name,
+          payee: creditor.name,
+          amount: Math.round(transactionAmount * 100) / 100
+        });
+
+        // Update remaining amounts
+        debtor.amount -= transactionAmount;
+        creditor.amount -= transactionAmount;
+
+        // Move to next debtor/creditor if current one is settled
+        if (debtor.amount < 0.01) debtorIdx++;
+        if (creditor.amount < 0.01) creditorIdx++;
+      }
+
+      return transactions;
+    }
+
+    function renderSettlement() {
+      const container = document.getElementById('settlement-transactions');
+      const verificationEl = document.getElementById('settlement-verification');
+      
+      if (!container || !verificationEl) return;
+
+      if (!state.games.length) {
+        container.innerHTML = '<div class="settlement-empty">🎴 No games yet. Settlements will appear here.</div>';
+        document.getElementById('settlement-total-loss').textContent = '0';
+        document.getElementById('settlement-total-profit').textContent = '0';
+        document.getElementById('settlement-balance-check').innerHTML = '✓ Balanced';
+        document.getElementById('settlement-balance-check').style.color = 'var(--gold2)';
+        return;
+      }
+
+      const result = calculateSettlements();
+      const { settlements, totalLosses, totalProfits, isBalanced } = result;
+
+      // Update verification display
+      document.getElementById('settlement-total-loss').textContent = totalLosses.toFixed(2);
+      document.getElementById('settlement-total-profit').textContent = totalProfits.toFixed(2);
+      
+      if (isBalanced) {
+        document.getElementById('settlement-balance-check').innerHTML = '✓ Balanced';
+        document.getElementById('settlement-balance-check').style.color = 'var(--gold2)';
+      } else {
+        const diff = Math.abs(totalLosses - totalProfits).toFixed(2);
+        document.getElementById('settlement-balance-check').innerHTML = `⚠ Mismatch: ${diff}`;
+        document.getElementById('settlement-balance-check').style.color = '#e74c3c';
+      }
+
+      // Sort settlements by date in descending order (latest first)
+      const sortedSettlements = [...settlements].sort((a, b) => {
+        return new Date(b.game.date) - new Date(a.game.date);
+      });
+
+      // Render transactions grouped by game (latest first)
+      container.innerHTML = sortedSettlements.map(({ game, transactions }) => {
+        if (transactions.length === 0) {
+          return `
+          <div class="settlement-game-card">
+            <div class="settlement-game-header">
+              <div>
+                <div class="settlement-game-name">${game.name}</div>
+                <div class="settlement-game-date">${game.date}</div>
+              </div>
+            </div>
+            <div style="text-align: center; color: rgba(232, 224, 200, 0.5); font-size: 12px; padding: 1rem;">
+              ✓ All players even
+            </div>
+          </div>`;
+        }
+
+        return `
+        <div class="settlement-game-card">
+          <div class="settlement-game-header">
+            <div>
+              <div class="settlement-game-name">${game.name}</div>
+              <div class="settlement-game-date">${game.date}</div>
+            </div>
+          </div>
+          ${transactions.map(tx => `
+          <div class="settlement-transaction">
+            <div class="settlement-flow">
+              <span style="color: #e74c3c; font-weight: bold;">${tx.payer}</span>
+              <span style="color: rgba(232, 224, 200, 0.5); margin: 0 8px;">→</span>
+              <span style="color: #27ae60; font-weight: bold;">${tx.payee}</span>
+            </div>
+            <div class="settlement-amount">₹${tx.amount.toFixed(2)}</div>
+          </div>`).join('')}
+        </div>`;
+      }).join('');
+
+      // Show empty state if no settlements
+      if (sortedSettlements.length === 0) {
+        container.innerHTML = '<div class="settlement-empty">📊 No settlements calculated.</div>';
+      }
+    }
+
     function showToast(msg) {
       const t = document.getElementById('toast');
       t.textContent = msg;
@@ -3092,6 +3370,263 @@
 
     function closeUserDetail() {
       document.getElementById('user-detail-overlay').classList.remove('active');
+    }
+
+    function switchTabDirect(t) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + t).classList.add('active');
+      document.querySelectorAll('.tab').forEach(b => {
+        if (b.textContent.includes('➕')) b.classList.add('active');
+      });
+    }
+
+    function renderAddGameForm() {
+      const container = document.getElementById('add-game-players');
+      if (!container) return;
+
+      if (!state.players.length) {
+        container.innerHTML = '<div style="color:rgba(232,224,200,0.5);font-size:14px;padding:1rem;text-align:center">No players available. Add players first.</div>';
+        return;
+      }
+
+      // Reset entries for all players
+      playerEntries = {};
+      const sorted = [...state.players].sort((a, b) => a.name.localeCompare(b.name));
+      sorted.forEach(p => { playerEntries[p.id] = [{ amount: '', type: 'skip' }]; });
+
+      container.innerHTML = sorted.map(p => buildPlayerBlock(p)).join('');
+    }
+
+    function buildPlayerBlock(p) {
+      const entries = playerEntries[p.id] || [{ amount: '', type: 'skip' }];
+      const rows = entries.map((e, idx) => buildEntryRow(p.id, idx, e)).join('');
+      return `
+        <div id="player-block-${p.id}" style="background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;border:1px solid rgba(201,151,58,0.2);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="color:var(--gold2);font-weight:bold;font-size:14px;">${p.name}</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span id="player-net-${p.id}" style="font-size:12px;font-family:'Cinzel Decorative',cursive;color:var(--gold3);">Net: 0</span>
+              <button onclick="addEntryRow('${p.id}')" style="background:rgba(201,151,58,0.25);border:1px solid var(--gold);color:var(--gold2);border-radius:5px;padding:3px 10px;cursor:pointer;font-size:16px;line-height:1.2;" title="Add another entry">+</button>
+            </div>
+          </div>
+          <div id="entries-${p.id}">${rows}</div>
+        </div>`;
+    }
+
+    function buildEntryRow(playerId, idx, entry) {
+      const canRemove = idx > 0;
+      return `
+        <div id="entry-row-${playerId}-${idx}" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-bottom:6px;">
+          <div>
+            <label style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(201,151,58,0.7);">Amount</label>
+            <input type="number" value="${entry.amount}" placeholder="0" min="0" step="0.1"
+              oninput="updateEntryAmount('${playerId}', ${idx}, this.value)"
+              style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:8px;font-size:13px;width:100%;" />
+          </div>
+          <div>
+            <label style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(201,151,58,0.7);">Result</label>
+            <select onchange="updateEntryType('${playerId}', ${idx}, this.value)"
+              style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:8px;font-size:13px;width:100%;">
+              <option value="skip" ${entry.type === 'skip' ? 'selected' : ''}>-</option>
+              <option value="win"  ${entry.type === 'win'  ? 'selected' : ''}>Win (Profit)</option>
+              <option value="loss" ${entry.type === 'loss' ? 'selected' : ''}>Loss</option>
+            </select>
+          </div>
+          <div style="padding-bottom:2px;">
+            ${canRemove
+              ? `<button onclick="removeEntryRow('${playerId}', ${idx})" title="Remove"
+                   style="background:rgba(192,57,43,0.25);border:1px solid rgba(192,57,43,0.5);color:#e74c3c;border-radius:5px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1;">✕</button>`
+              : `<div style="width:36px;"></div>`}
+          </div>
+        </div>`;
+    }
+
+    function addEntryRow(playerId) {
+      if (!playerEntries[playerId]) playerEntries[playerId] = [];
+      playerEntries[playerId].push({ amount: '', type: 'skip' });
+      refreshPlayerBlock(playerId);
+    }
+
+    function removeEntryRow(playerId, idx) {
+      playerEntries[playerId].splice(idx, 1);
+      refreshPlayerBlock(playerId);
+    }
+
+    function updateEntryAmount(playerId, idx, val) {
+      if (playerEntries[playerId] && playerEntries[playerId][idx] !== undefined) {
+        playerEntries[playerId][idx].amount = val;
+        updatePlayerNet(playerId);
+      }
+    }
+
+    function updateEntryType(playerId, idx, val) {
+      if (playerEntries[playerId] && playerEntries[playerId][idx] !== undefined) {
+        playerEntries[playerId][idx].type = val;
+        updatePlayerNet(playerId);
+      }
+    }
+
+    function updatePlayerNet(playerId) {
+      const entries = playerEntries[playerId] || [];
+      let net = 0;
+      entries.forEach(e => {
+        const amt = parseFloat(e.amount) || 0;
+        if (e.type === 'win') net += amt;
+        else if (e.type === 'loss') net -= amt;
+      });
+      const el = document.getElementById('player-net-' + playerId);
+      if (el) {
+        el.textContent = 'Net: ' + (net > 0 ? '+' : '') + net.toFixed(1);
+        el.style.color = net > 0 ? '#2ecc71' : net < 0 ? '#e74c3c' : 'var(--gold3)';
+      }
+    }
+
+    function refreshPlayerBlock(playerId) {
+      const p = state.players.find(pl => pl.id === playerId);
+      if (!p) return;
+      const block = document.getElementById('player-block-' + playerId);
+      if (!block) return;
+      const entries = playerEntries[playerId] || [];
+      document.getElementById('entries-' + playerId).innerHTML =
+        entries.map((e, idx) => buildEntryRow(playerId, idx, e)).join('');
+      updatePlayerNet(playerId);
+    }
+
+    function submitAddGame() {
+      const gameName = document.getElementById('add-game-name').value.trim();
+      const gameDate = document.getElementById('add-game-date').value;
+
+      if (!gameName) {
+        showToast('❌ Please enter a game name');
+        return;
+      }
+      if (!gameDate) {
+        showToast('❌ Please select a date');
+        return;
+      }
+
+      // Aggregate all entries per player into a single net result
+      const results = [];
+      let hasAnyResult = false;
+
+      state.players.forEach(p => {
+        const entries = playerEntries[p.id] || [];
+        let net = 0;
+        entries.forEach(e => {
+          const amt = parseFloat(e.amount) || 0;
+          if (e.type === 'win') net += amt;
+          else if (e.type === 'loss') net -= amt;
+        });
+        if (net !== 0) {
+          hasAnyResult = true;
+          results.push({
+            playerId: p.id,
+            playerName: p.name,
+            type: net > 0 ? 'win' : 'loss',
+            amount: Math.abs(net)
+          });
+        }
+      });
+
+      if (!hasAnyResult) {
+        showToast('❌ Enter at least one result');
+        return;
+      }
+
+      // Verify balance
+      const totalWins = results.filter(r => r.type === 'win').reduce((sum, r) => sum + r.amount, 0);
+      const totalLosses = results.filter(r => r.type === 'loss').reduce((sum, r) => sum + r.amount, 0);
+
+      if (Math.abs(totalWins - totalLosses) > 0.01) {
+        showToast(`❌ Balance error! Wins (${totalWins.toFixed(2)}) ≠ Losses (${totalLosses.toFixed(2)})`);
+        return;
+      }
+
+      // Create game object with incremented ID
+      const nextGameNumber = state.games.length + 1;
+      const gameId = String(nextGameNumber);
+      const newGame = {
+        id: gameId,
+        name: gameName,
+        date: gameDate,
+        results: results
+      };
+
+      // Add to state
+      state.games.push(newGame);
+      saveState();
+
+      // Prepare files
+      const gameFileName = `game-${nextGameNumber}.json`;
+      const gameData = JSON.stringify(newGame, null, 2);
+
+      // Update manifest with incremented numbers
+      const updatedManifest = {
+        games: state.games.map((g, idx) => ({
+          id: String(idx + 1),
+          name: g.name,
+          date: g.date,
+          file: `game-${idx + 1}.json`
+        }))
+      };
+      const manifestData = JSON.stringify(updatedManifest, null, 2);
+
+      // Try to upload to server if configured, else download
+      if (SERVER_UPLOAD_URL) {
+        const formData = new FormData();
+        formData.append('gameFile', new Blob([gameData], { type: 'application/json' }), gameFileName);
+        formData.append('manifestFile', new Blob([manifestData], { type: 'application/json' }), 'games-manifest.json');
+
+        fetch(SERVER_UPLOAD_URL, { method: 'POST', body: formData })
+          .then(r => {
+            if (r.ok) {
+              showToast('✓ Game #' + nextGameNumber + ' - Files uploaded to server!');
+            } else {
+              throw new Error('Upload failed');
+            }
+          })
+          .catch(e => {
+            console.error('Server upload failed, falling back to download:', e);
+            downloadJSON(gameData, gameFileName);
+            setTimeout(() => downloadJSON(manifestData, 'games-manifest.json'), 500);
+            showToast('⚠ Server unavailable - Files downloaded instead');
+          });
+      } else {
+        // No server configured, download files
+        downloadJSON(gameData, gameFileName);
+        setTimeout(() => downloadJSON(manifestData, 'games-manifest.json'), 500);
+        showToast('✓ Game #' + nextGameNumber + ' - Files downloaded (upload manually)');
+      }
+
+      resetAddGameForm();
+
+      // Refresh UI
+      setTimeout(() => {
+        renderOverall();
+        renderMonthly();
+        renderPerGame();
+        renderSettlement();
+      }, 1000);
+    }
+
+    function resetAddGameForm() {
+      const today = new Date().toISOString().slice(0, 10);
+      document.getElementById('add-game-name').value = defaultGameName(today);
+      document.getElementById('add-game-name').dataset.auto = 'true';
+      document.getElementById('add-game-date').value = today;
+      playerEntries = {};
+      renderAddGameForm();
+    }
+
+    function downloadJSON(data, fileName) {
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(url);
     }
 
     // Close modal when clicking outside
