@@ -1,0 +1,55 @@
+{
+  "id": "19",
+  "name": "Poker Night May 3rd",
+  "date": "2026-05-03",
+  "results": [
+    {
+      "playerId": "1",
+      "playerName": "Gaurav",
+      "type": "loss",
+      "amount": 1400.2
+    },
+    {
+      "playerId": "3",
+      "playerName": "Nadeem",
+      "type": "loss",
+      "amount": 500
+    },
+    {
+      "playerId": "4",
+      "playerName": "Monty",
+      "type": "win",
+      "amount": 717.2
+    },
+    {
+      "playerId": "5",
+      "playerName": "Hanu",
+      "type": "loss",
+      "amount": 200
+    },
+    {
+      "playerId": "8",
+      "playerName": "Keshav",
+      "type": "win",
+      "amount": 147.3
+    },
+    {
+      "playerId": "9",
+      "playerName": "HeHe",
+      "type": "win",
+      "amount": 14.4
+    },
+    {
+      "playerId": "15",
+      "playerName": "Sarthak",
+      "type": "loss",
+      "amount": 20.1
+    },
+    {
+      "playerId": "16",
+      "playerName": "Harsh",
+      "type": "win",
+      "amount": 1241.4
+    }
+  ]
+}

@@ -107,6 +107,18 @@
       "name": "Poker Night May 1st",
       "date": "2026-05-01",
       "file": "game-18.json"
+    },
+    {
+      "id": "19",
+      "name": "Poker Night May 3rd",
+      "date": "2026-05-03",
+      "file": "game-19.json"
+    },
+    {
+      "id": "20",
+      "name": "Poker Night May 4th",
+      "date": "2026-05-04",
+      "file": "game-20.json"
     }
   ]
 }
