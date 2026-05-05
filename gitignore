@@ -1,0 +1,17 @@
+# ============================================================
+# 🔒 SECURITY — Never commit these files
+# ============================================================
+
+# Local config with Supabase keys — KEEP OFF GITHUB
+config.js
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Node (if you ever add a build step)
+node_modules/

@@ -6,6 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Poker Night Leaderboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -2238,6 +2239,7 @@
         opacity: 0;
         transform: translateY(20px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -2347,6 +2349,12 @@
         <div class="suit-row">
           <span>♠</span><span style="color:#c0392b">♥</span><span style="color:#c0392b">♦</span><span>♣</span>
         </div>
+        <div style="margin-top:8px;">
+          <button onclick="requireAuth('export-backup', 'Export data? Verify secret code.')"
+            style="background:rgba(201,151,58,0.2);border:1px solid var(--gold);color:var(--gold2);border-radius:8px;padding:6px 16px;cursor:pointer;font-family:'Cinzel Decorative',cursive;font-size:10px;letter-spacing:1px;">
+            💾 Export Backup
+          </button>
+        </div>
       </div>
 
       <div class="tabs">
@@ -2355,7 +2363,8 @@
         <button class="tab" onclick="switchTab('pergame')">Per Game</button>
         <button class="tab" onclick="switchTab('users')">Users</button>
         <button class="tab" onclick="switchTab('settlement')">Settlement</button>
-        <button class="tab" onclick="requireAuth('add-game-form', 'Add new game - Admin required')">➕ Add Game</button>
+        <button class="tab" onclick="requireAuth('add-game-form', 'Add new game - Admin required')">➕ Add
+          Game</button>
       </div>
 
       <!-- OVERALL TAB -->
@@ -2389,20 +2398,29 @@
       <!-- SETTLEMENT TAB -->
       <div class="panel" id="tab-settlement">
         <div class="section-title">💳 Settlement Summary</div>
-        <div id="settlement-verification" style="margin: 0 1rem 1rem; padding: 1rem; border-radius: 12px; border: 2px solid var(--gold); background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); font-size: 13px;">
+        <div id="settlement-verification"
+          style="margin: 0 1rem 1rem; padding: 1rem; border-radius: 12px; border: 2px solid var(--gold); background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); font-size: 13px;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
             <div style="text-align: center;">
-              <div style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Total Losses</div>
+              <div
+                style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">
+                Total Losses</div>
               <div id="settlement-total-loss" style="font-size: 20px; font-weight: bold; color: #e74c3c;">0</div>
             </div>
             <div style="text-align: center;">
-              <div style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Total Profits</div>
+              <div
+                style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">
+                Total Profits</div>
               <div id="settlement-total-profit" style="font-size: 20px; font-weight: bold; color: #27ae60;">0</div>
             </div>
           </div>
-          <div style="text-align: center; padding: 0.8rem; background: rgba(201, 151, 58, 0.15); border-radius: 8px; border: 1px solid var(--gold);">
-            <div style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Balance Check</div>
-            <div id="settlement-balance-check" style="font-size: 16px; font-weight: bold; color: var(--gold2);">✓ Balanced</div>
+          <div
+            style="text-align: center; padding: 0.8rem; background: rgba(201, 151, 58, 0.15); border-radius: 8px; border: 1px solid var(--gold);">
+            <div
+              style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">
+              Balance Check</div>
+            <div id="settlement-balance-check" style="font-size: 16px; font-weight: bold; color: var(--gold2);">✓
+              Balanced</div>
           </div>
         </div>
         <div class="section-title">Transactions by Game</div>
@@ -2412,31 +2430,37 @@
       <!-- ADD GAME FORM TAB -->
       <div class="panel" id="tab-addgame">
         <div class="section-title">➕ Add New Game</div>
-        <div style="margin: 1.5rem 1rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); border: 2px solid var(--gold); border-radius: 12px;">
+        <div
+          style="margin: 1.5rem 1rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); border: 2px solid var(--gold); border-radius: 12px;">
           <div class="form-row">
             <div class="field" style="flex: 1;">
               <label>Game Name</label>
-              <input type="text" id="add-game-name" placeholder="e.g., POKER NIGHT MAY 2ND" style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:10px;font-size:14px;width:100%;font-family:'Crimson Pro',serif;" />
+              <input type="text" id="add-game-name" placeholder="e.g., POKER NIGHT MAY 2ND"
+                style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:10px;font-size:14px;width:100%;font-family:'Crimson Pro',serif;" />
             </div>
           </div>
           <div class="form-row">
             <div class="field" style="flex: 1;">
               <label>Game Date</label>
-              <input type="date" id="add-game-date" style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:10px;font-size:14px;width:100%;font-family:'Crimson Pro',serif;" />
+              <input type="date" id="add-game-date"
+                style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:10px;font-size:14px;width:100%;font-family:'Crimson Pro',serif;" />
             </div>
           </div>
         </div>
 
-        <div style="margin: 1.5rem 1rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); border: 2px solid var(--gold); border-radius: 12px;">
+        <div
+          style="margin: 1.5rem 1rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); border: 2px solid var(--gold); border-radius: 12px;">
           <div class="section-title" style="margin-bottom: 1rem;">Player Results</div>
           <div id="add-game-players" style="display:grid; gap: 1rem;"></div>
         </div>
 
         <div style="margin: 1.5rem 1rem; display: flex; gap: 1rem; justify-content: center;">
-          <button onclick="submitAddGame()" style="padding:12px 24px; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
+          <button onclick="submitAddGame()"
+            style="padding:12px 24px; background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
             ✓ Submit Game
           </button>
-          <button onclick="resetAddGameForm()" style="padding:12px 24px; background: rgba(201,151,58,0.2); color: var(--gold); border: 1px solid var(--gold); border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
+          <button onclick="resetAddGameForm()"
+            style="padding:12px 24px; background: rgba(201,151,58,0.2); color: var(--gold); border: 1px solid var(--gold); border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
             ⟲ Reset
           </button>
         </div>
@@ -2507,36 +2531,40 @@
     let state = { players: [], games: [], selectedGame: null };
     let isAuthenticated = false;
     let authPendingAction = null;
-    const SECRET_CODE = '1108'; // Change this to your secret code
-    const SERVER_UPLOAD_URL = null; // Set to your backend URL if you have one: 'http://localhost:3000/upload'
-    let playerEntries = {}; // Stores multiple entries per player: { playerId: [{amount, result}, ...] }
+    let playerEntries = {}; // Stores multiple entries per player: {playerId: [{amount, result}, ...] }
+
+    const SUPABASE_URL = "https://tzdcftidofyeszlimsfs.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_2RnWr1JzrDema7j5_jNwQQ_udT3EPnq";
+    const SECRET_CODE = '1108';
+    // ============================================================
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loadState() {
       try {
-        // Load players from file
-        const playersResponse = await fetch('players.json');
-        if (!playersResponse.ok) throw new Error('Failed to load players.json');
-        const playersData = await playersResponse.json();
-        const players = playersData.players || [];
+        showToast('Loading data...');
 
-        // Load games manifest
-        const manifestResponse = await fetch('games-manifest.json');
-        if (!manifestResponse.ok) throw new Error('Failed to load games-manifest.json');
-        const manifestData = await manifestResponse.json();
+        const { data: players, error: e1 } = await db.from('players').select('*').order('name');
+        if (e1) throw e1;
 
-        // Load individual game files
-        const games = [];
-        for (const gameInfo of (manifestData.games || [])) {
-          const gameResponse = await fetch(`games/${gameInfo.file}`);
-          if (!gameResponse.ok) throw new Error(`Failed to load ${gameInfo.file}`);
-          const gameData = await gameResponse.json();
-          games.push(gameData);
-        }
+        const { data: games, error: e2 } = await db.from('games').select('*').order('date');
+        if (e2) throw e2;
 
-        state = { players, games, selectedGame: null };
+        const { data: results, error: e3 } = await db.from('game_results').select('*');
+        if (e3) throw e3;
+
+        const gamesWithResults = (games || []).map(g => ({
+          ...g,
+          results: (results || []).filter(r => r.game_id === g.id).map(r => ({
+            playerId: r.player_id,
+            playerName: r.player_name,
+            type: r.type,
+            amount: parseFloat(r.amount)
+          }))
+        }));
+
+        state = { players: players || [], games: gamesWithResults, selectedGame: null };
+
         const selectedDate = localStorage.getItem('selectedGameDate');
-
-        // Restore selection by date
         if (selectedDate) {
           const match = state.games.find(g => g.date === selectedDate);
           state.selectedGame = match ? match.id : state.games.at(-1)?.id || null;
@@ -2544,75 +2572,35 @@
           state.selectedGame = state.games.at(-1)?.id || null;
         }
 
-        console.log('✓ State loaded successfully from JSON files:', state);
+        console.log('✓ Loaded from Supabase:', state);
       } catch (e) {
-        console.error('✗ Error loading state from files:', e);
-        showToast('Error loading data. Please check console.');
+        console.error('✗ Error loading from Supabase:', e);
+        showToast('❌ Error loading data. Check console.');
         state = { players: [], games: [], selectedGame: null };
       }
-
       init();
     }
 
 
     async function saveState() {
-      try {
-        // Save to localStorage for client-side tracking
-        const selectedGame = state.games.find(g => g.id === state.selectedGame);
-        if (selectedGame) {
-          localStorage.setItem('selectedGameDate', selectedGame.date);
-        }
-        localStorage.setItem('poker_state_backup', JSON.stringify(state));
-
-        // Log to console for monitoring
-        console.log('Current state updated');
-        console.log('Total games:', state.games.length);
-        console.log('Players:', state.players.length);
-
-        showToast('Progress saved!');
-      } catch (e) {
-        console.error('Error saving state:', e);
-      }
+      // Data is saved directly to Supabase on each action.
+      // Just persist the selected game date locally.
+      const selectedGame = state.games.find(g => g.id === state.selectedGame);
+      if (selectedGame) localStorage.setItem('selectedGameDate', selectedGame.date);
     }
 
-    async function saveGameFile(game) {
+    async function exportBackup() {
       try {
-        // Generate game file name based on game index
-        const gameIndex = state.games.findIndex(g => g.id === game.id) + 1;
-        const gameFileName = `game-${gameIndex}.json`;
-
-        // Log the game data that should be saved
-        console.log(`Game file to save (${gameFileName}):`, JSON.stringify(game, null, 2));
-
-        // For demonstration, also download the game file
-        const dataStr = JSON.stringify(game, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = gameFileName;
-        link.click();
-        URL.revokeObjectURL(url);
+        const { data: players } = await db.from('players').select('*');
+        const { data: games } = await db.from('games').select('*');
+        const { data: results } = await db.from('game_results').select('*');
+        const backup = { exportDate: new Date().toISOString(), players, games, results };
+        downloadJSON(JSON.stringify(backup, null, 2), `poker-backup-${new Date().toISOString().slice(0, 10)}.json`);
+        showToast('✓ Backup downloaded!');
       } catch (e) {
-        console.error('Error saving game file:', e);
+        showToast('❌ Backup failed. Check console.');
+        console.error(e);
       }
-    }
-
-    function downloadDataAsJSON() {
-      // Export all data as a complete backup
-      const allData = {
-        players: state.players,
-        games: state.games,
-        exportDate: new Date().toISOString()
-      };
-      const dataStr = JSON.stringify(allData, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `poker_backup_${new Date().toISOString().slice(0, 10)}.json`;
-      link.click();
-      URL.revokeObjectURL(url);
     }
 
     function requireAuth(action, reason = 'Admin access required') {
@@ -2667,16 +2655,17 @@
       else if (action === 'add-game-form') {
         switchTabDirect('addgame');
       }
+      else if (action === 'export-backup') exportBackup();
     }
 
     function getOrdinal(n) {
-      const s = ['th','st','nd','rd'], v = n % 100;
-      return n + (s[(v-20)%10] || s[v] || s[0]);
+      const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+      return n + (s[(v - 20) % 10] || s[v] || s[0]);
     }
 
     function defaultGameName(dateStr) {
       const d = dateStr ? new Date(dateStr + 'T00:00:00') : new Date();
-      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       return `Poker Night ${months[d.getMonth()]} ${getOrdinal(d.getDate())}`;
     }
 
@@ -2688,7 +2677,7 @@
       const today = new Date().toISOString().slice(0, 10);
       if (addGameDate) {
         addGameDate.value = today;
-        addGameDate.addEventListener('change', function() {
+        addGameDate.addEventListener('change', function () {
           if (addGameName && (!addGameName.value || addGameName.dataset.auto === 'true')) {
             addGameName.value = defaultGameName(this.value);
             addGameName.dataset.auto = 'true';
@@ -2698,7 +2687,7 @@
       if (addGameName) {
         addGameName.value = defaultGameName(today);
         addGameName.dataset.auto = 'true';
-        addGameName.addEventListener('input', function() {
+        addGameName.addEventListener('input', function () {
           this.dataset.auto = 'false';
         });
       }
@@ -2726,57 +2715,63 @@
       if (t === 'addgame') renderAddGameForm();
     }
 
-    function addPlayer() {
+    async function addPlayer() {
       const inp = document.getElementById('new-player-input');
       const name = inp.value.trim();
       if (!name) return;
       if (state.players.find(p => p.name.toLowerCase() === name.toLowerCase())) { showToast('Player exists!'); return; }
-      state.players.push({ id: Date.now() + '', name });
+      const newPlayer = { id: Date.now() + '', name };
+      const { error } = await db.from('players').insert(newPlayer);
+      if (error) { showToast('❌ Error saving player!'); console.error(error); return; }
+      state.players.push(newPlayer);
       inp.value = '';
-      saveState();
       renderPlayers();
+      renderAddGameForm();
       renderResultRows();
       showToast(name + ' joined the table!');
     }
 
-    function removePlayer(id) {
+    async function removePlayer(id) {
+      const { error } = await db.from('players').delete().eq('id', id);
+      if (error) { showToast('❌ Error removing player!'); console.error(error); return; }
       state.players = state.players.filter(p => p.id !== id);
-      saveState();
       renderPlayers();
+      renderAddGameForm();
       renderResultRows();
+      showToast('Player removed.');
     }
 
     function renderPlayers() {
       const el = document.getElementById('players-list');
       if (!el) return;
       if (!state.players.length) { el.innerHTML = '<span style="font-size:13px;color:rgba(232,224,200,0.4)">No players yet</span>'; return; }
-      el.innerHTML = [...state.players].sort((a,b) => a.name.localeCompare(b.name)).map(p => `
-      <div class="player-chip">
-        ${p.name}
-        <span class="remove" onclick="requireAuth('remove-player-${p.id}', 'Remove player?')">✕</span>
-      </div>`).join('');
+      el.innerHTML = [...state.players].sort((a, b) => a.name.localeCompare(b.name)).map(p => `
+              <div class="player-chip">
+                ${p.name}
+                <span class="remove" onclick="requireAuth('remove-player-${p.id}', 'Remove player?')">✕</span>
+              </div>`).join('');
     }
 
     function renderResultRows() {
       const el = document.getElementById('result-rows');
       if (!el) return;
       if (!state.players.length) { el.innerHTML = '<div style="color:rgba(232,224,200,0.4);font-size:13px;padding:8px 0">Add players first in the Players tab.</div>'; return; }
-      el.innerHTML = [...state.players].sort((a,b) => a.name.localeCompare(b.name)).map(p => `
-      <div class="form-row" style="align-items:center;margin-bottom:8px">
-        <div class="field" style="flex:1.5;font-size:14px;padding-top:4px">${p.name}</div>
-        <div class="field" style="flex:0.5">
-          <label>Result</label>
-          <select id="res-type-${p.id}" style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:8px 6px;font-size:14px;width:100%">
-            <option value="skip">-</option>
-            <option value="win">Win</option>
-            <option value="loss">Loss</option>
-          </select>
-        </div>
-        <div class="field" style="flex:0.8">
-          <label>Amount</label>
-          <input type="number" id="res-amt-${p.id}" placeholder="0" style="text-align:right" />
-        </div>
-      </div>`).join('');
+      el.innerHTML = [...state.players].sort((a, b) => a.name.localeCompare(b.name)).map(p => `
+              <div class="form-row" style="align-items:center;margin-bottom:8px">
+                <div class="field" style="flex:1.5;font-size:14px;padding-top:4px">${p.name}</div>
+                <div class="field" style="flex:0.5">
+                  <label>Result</label>
+                  <select id="res-type-${p.id}" style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:8px 6px;font-size:14px;width:100%">
+                    <option value="skip">-</option>
+                    <option value="win">Win</option>
+                    <option value="loss">Loss</option>
+                  </select>
+                </div>
+                <div class="field" style="flex:0.8">
+                  <label>Amount</label>
+                  <input type="number" id="res-amt-${p.id}" placeholder="0" style="text-align:right" />
+                </div>
+              </div>`).join('');
     }
 
     function saveGame() {
@@ -2832,10 +2827,12 @@
       document.querySelectorAll('.tab').forEach(b => { if (b.textContent.toLowerCase().includes(t === 'addgame' ? 'add' : t === 'pergame' ? 'per' : t)) b.classList.add('active'); });
     }
 
-    function deleteGame(id) {
+    async function deleteGame(id) {
+      const { error } = await db.from('games').delete().eq('id', id);
+      if (error) { showToast('❌ Error deleting game!'); console.error(error); return; }
       state.games = state.games.filter(g => g.id !== id);
       if (state.selectedGame === id) state.selectedGame = state.games.length ? state.games[state.games.length - 1].id : null;
-      saveState();
+      await saveState();
       renderOverall();
       renderMonthly();
       renderPerGame();
@@ -2936,18 +2933,18 @@
       const totalPlayers = state.players.length;
       const bigWinner = stats.length ? stats[0].name : '-';
       if (se) se.innerHTML = `
-      <div class="stat-box"><span class="stat-val">${totalGames}</span><span class="stat-label">Games</span></div>
-      <div class="stat-box"><span class="stat-val">${totalPlayers}</span><span class="stat-label">Players</span></div>
-      <div class="stat-box"><span class="stat-val" style="font-size:clamp(10px,2.5vw,14px)">${bigWinner}</span><span class="stat-label">Top Dog</span></div>`;
+              <div class="stat-box"><span class="stat-val">${totalGames}</span><span class="stat-label">Games</span></div>
+              <div class="stat-box"><span class="stat-val">${totalPlayers}</span><span class="stat-label">Players</span></div>
+              <div class="stat-box"><span class="stat-val" style="font-size:clamp(10px,2.5vw,14px)">${bigWinner}</span><span class="stat-label">Top Dog</span></div>`;
       if (!stats.length) { el.innerHTML = '<div class="empty"><div class="card-icon">🃏</div>No games yet.<br>Add your first game!</div>'; return; }
       el.innerHTML = `<table class="lb-table">
-      <thead><tr>
-        <th style="width:36px">#</th>
-        <th>Player</th>
-        <th>W/L</th>
-        <th style="text-align:right">Net</th>
-      </tr></thead>
-      <tbody>${stats.map((s, i) => `
+                <thead><tr>
+                  <th style="width:36px">#</th>
+                  <th>Player</th>
+                  <th>W/L</th>
+                  <th style="text-align:right">Net</th>
+                </tr></thead>
+                <tbody>${stats.map((s, i) => `
         <tr class="lb-row">
           <td><div class="rank-badge rank-${i < 3 ? i + 1 : 'other'}">${i + 1}</div></td>
           <td class="player-name">${s.name}</td>
@@ -2956,8 +2953,8 @@
             ${s.net > 0 ? '+' : ''}${s.net.toFixed(0)}
           </td>
         </tr>`).join('')}
-      </tbody>
-    </table>`;
+                </tbody>
+              </table>`;
     }
 
     function renderMonthly() {
@@ -2977,7 +2974,7 @@
       if (!state.selectedMonth) state.selectedMonth = months[0];
 
       sel.innerHTML = months.map(month => `
-      <div class="game-pill ${state.selectedMonth === month ? 'active' : ''}" onclick="selectMonth('${month}')">${month}</div>`).join('');
+              <div class="game-pill ${state.selectedMonth === month ? 'active' : ''}" onclick="selectMonth('${month}')">${month}</div>`).join('');
 
       const stats = monthlyStats[state.selectedMonth] || [];
 
@@ -2987,17 +2984,17 @@
       }
 
       lb.innerHTML = `
-      <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${state.selectedMonth} Standings</span>
-      </div>
-      <table class="lb-table">
-        <thead><tr>
-          <th style="width:36px">#</th>
-          <th>Player</th>
-          <th>W/L</th>
-          <th style="text-align:right">Net</th>
-        </tr></thead>
-        <tbody>${stats.map((s, i) => `
+              <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+                <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${state.selectedMonth} Standings</span>
+              </div>
+              <table class="lb-table">
+                <thead><tr>
+                  <th style="width:36px">#</th>
+                  <th>Player</th>
+                  <th>W/L</th>
+                  <th style="text-align:right">Net</th>
+                </tr></thead>
+                <tbody>${stats.map((s, i) => `
           <tr class="lb-row">
             <td><div class="rank-badge rank-${i < 3 ? i + 1 : 'other'}">${i + 1}</div></td>
             <td class="player-name">${s.name}</td>
@@ -3006,8 +3003,8 @@
               ${s.net > 0 ? '+' : ''}${s.net.toFixed(0)}
             </td>
           </tr>`).join('')}
-        </tbody>
-      </table>`;
+                </tbody>
+              </table>`;
     }
     function selectMonth(month) {
       state.selectedMonth = month;
@@ -3040,20 +3037,20 @@
         const isWinner = p.net > 0;
         const icon = isWinner ? '🏆' : '♠️';
         return `
-        <div class="user-card ${isWinner ? 'winner' : 'loser'}" onclick="createSparkles(event); showUserDetail('${p.id}', '${p.name}', ${p.net}, ${p.wins}, ${p.losses}, ${p.games})">
-          <div class="user-chip-icon">${icon}</div>
-          <div class="user-card-name">${p.name}</div>
-          <div class="user-card-stats">
-            <div class="user-card-stat-label">Net</div>
-            <div class="user-card-stat-value ${isWinner ? 'net-pos' : 'net-neg'}">
-              ${isWinner ? '+' : ''}${p.net.toFixed(1)}
-            </div>
-            <div style="margin-top:12px;border-top:1px solid rgba(201,151,58,0.3);padding-top:8px;font-size:11px;">
-              <span class="wins">▲ ${p.wins}</span> | <span class="losses">▼ ${p.losses}</span>
-            </div>
-          </div>
-        </div>
-      `;
+              <div class="user-card ${isWinner ? 'winner' : 'loser'}" onclick="createSparkles(event); showUserDetail('${p.id}', '${p.name}', ${p.net}, ${p.wins}, ${p.losses}, ${p.games})">
+                <div class="user-chip-icon">${icon}</div>
+                <div class="user-card-name">${p.name}</div>
+                <div class="user-card-stats">
+                  <div class="user-card-stat-label">Net</div>
+                  <div class="user-card-stat-value ${isWinner ? 'net-pos' : 'net-neg'}">
+                    ${isWinner ? '+' : ''}${p.net.toFixed(1)}
+                  </div>
+                  <div style="margin-top:12px;border-top:1px solid rgba(201,151,58,0.3);padding-top:8px;font-size:11px;">
+                    <span class="wins">▲ ${p.wins}</span> | <span class="losses">▼ ${p.losses}</span>
+                  </div>
+                </div>
+              </div>
+              `;
       }).join('');
     }
 
@@ -3063,7 +3060,7 @@
       if (!sel || !lb) return;
       if (!state.games.length) { sel.innerHTML = ''; lb.innerHTML = '<div class="empty"><div class="card-icon">🎴</div>No games yet.</div>'; return; }
       sel.innerHTML = [...state.games].map(g => `
-      <div class="game-pill ${state.selectedGame === g.id ? 'active' : ''}" onclick="selectGame('${g.id}')">${g.name}</div>`).join('');
+              <div class="game-pill ${state.selectedGame === g.id ? 'active' : ''}" onclick="selectGame('${g.id}')">${g.name}</div>`).join('');
       const game = state.games.find(g => g.id === state.selectedGame) || state.games[state.games.length - 1];
       if (!game) return;
       const sorted = [...game.results].sort((a, b) => {
@@ -3072,21 +3069,21 @@
         return bv - av;
       });
       lb.innerHTML = `
-      <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${game.name}</span>
-        <span style="font-size:11px;color:rgba(232,224,200,0.4)">${game.date}</span>
-      </div>
-      <table class="lb-table">
-        <thead><tr><th style="width:36px">#</th><th>Player</th><th>Result</th><th style="text-align:right">Amount</th></tr></thead>
-        <tbody>${sorted.map((r, i) => `
+              <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+                <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${game.name}</span>
+                <span style="font-size:11px;color:rgba(232,224,200,0.4)">${game.date}</span>
+              </div>
+              <table class="lb-table">
+                <thead><tr><th style="width:36px">#</th><th>Player</th><th>Result</th><th style="text-align:right">Amount</th></tr></thead>
+                <tbody>${sorted.map((r, i) => `
           <tr class="lb-row">
             <td><div class="rank-badge rank-${i < 3 ? i + 1 : 'other'}">${i + 1}</div></td>
             <td class="player-name">${r.playerName}</td>
             <td>${r.type === 'win' ? '<span class="wins">▲ Win</span>' : '<span class="losses">▼ Loss</span>'}</td>
             <td style="text-align:right" class="${r.type === 'win' ? 'net-pos' : 'net-neg'}">${r.type === 'win' ? '+' : '-'}${r.amount.toFixed(0)}</td>
           </tr>`).join('')}
-        </tbody>
-      </table>`;
+                </tbody>
+              </table>`;
     }
 
     function selectGame(id) {
@@ -3101,18 +3098,18 @@
       el.innerHTML = [...state.games].map(g => {
         const sorted = [...g.results].sort((a, b) => (b.type === 'win' ? b.amount : -b.amount) - (a.type === 'win' ? a.amount : -a.amount));
         return `<div class="game-card">
-        <div class="game-card-header">
-          <span class="game-name">${g.name}</span>
-          <div style="display:flex;gap:8px;align-items:center">
-            <span class="game-date">${g.date}</span>
-            <button class="btn-sm" onclick="deleteGame('${g.id}')">✕</button>
-          </div>
-        </div>
-        ${sorted.map((r, i) => `<div class="result-row">
+                <div class="game-card-header">
+                  <span class="game-name">${g.name}</span>
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <span class="game-date">${g.date}</span>
+                    <button class="btn-sm" onclick="deleteGame('${g.id}')">✕</button>
+                  </div>
+                </div>
+                ${sorted.map((r, i) => `<div class="result-row">
           <span>${i === 0 ? '👑 ' : ''}${r.playerName}</span>
           <span class="${r.type === 'win' ? 'net-pos' : 'net-neg'}">${r.type === 'win' ? '+' : '-'}${r.amount.toFixed(0)}</span>
         </div>`).join('')}
-      </div>`;
+              </div>`;
       }).join('');
     }
 
@@ -3123,7 +3120,7 @@
      * to balance all accounts (minimum number of transactions)
      */
     function calculateSettlements() {
-      const settlements = []; // Array of { game, transactions: [{payer, payee, amount}] }
+      const settlements = []; // Array of {game, transactions: [{payer, payee, amount}] }
       let totalLosses = 0;
       let totalProfits = 0;
 
@@ -3166,10 +3163,10 @@
      */
     function settleGame(playerNets) {
       const transactions = [];
-      
+
       // Separate creditors (positive net) and debtors (negative net)
-      const creditors = []; // { name, amount }
-      const debtors = [];   // { name, amount }
+      const creditors = []; // {name, amount}
+      const debtors = [];   // {name, amount}
 
       Object.entries(playerNets).forEach(([name, net]) => {
         if (net > 0.01) {
@@ -3212,7 +3209,7 @@
     function renderSettlement() {
       const container = document.getElementById('settlement-transactions');
       const verificationEl = document.getElementById('settlement-verification');
-      
+
       if (!container || !verificationEl) return;
 
       if (!state.games.length) {
@@ -3230,7 +3227,7 @@
       // Update verification display
       document.getElementById('settlement-total-loss').textContent = totalLosses.toFixed(2);
       document.getElementById('settlement-total-profit').textContent = totalProfits.toFixed(2);
-      
+
       if (isBalanced) {
         document.getElementById('settlement-balance-check').innerHTML = '✓ Balanced';
         document.getElementById('settlement-balance-check').style.color = 'var(--gold2)';
@@ -3249,28 +3246,28 @@
       container.innerHTML = sortedSettlements.map(({ game, transactions }) => {
         if (transactions.length === 0) {
           return `
-          <div class="settlement-game-card">
-            <div class="settlement-game-header">
-              <div>
-                <div class="settlement-game-name">${game.name}</div>
-                <div class="settlement-game-date">${game.date}</div>
-              </div>
-            </div>
-            <div style="text-align: center; color: rgba(232, 224, 200, 0.5); font-size: 12px; padding: 1rem;">
-              ✓ All players even
-            </div>
-          </div>`;
+              <div class="settlement-game-card">
+                <div class="settlement-game-header">
+                  <div>
+                    <div class="settlement-game-name">${game.name}</div>
+                    <div class="settlement-game-date">${game.date}</div>
+                  </div>
+                </div>
+                <div style="text-align: center; color: rgba(232, 224, 200, 0.5); font-size: 12px; padding: 1rem;">
+                  ✓ All players even
+                </div>
+              </div>`;
         }
 
         return `
-        <div class="settlement-game-card">
-          <div class="settlement-game-header">
-            <div>
-              <div class="settlement-game-name">${game.name}</div>
-              <div class="settlement-game-date">${game.date}</div>
-            </div>
-          </div>
-          ${transactions.map(tx => `
+              <div class="settlement-game-card">
+                <div class="settlement-game-header">
+                  <div>
+                    <div class="settlement-game-name">${game.name}</div>
+                    <div class="settlement-game-date">${game.date}</div>
+                  </div>
+                </div>
+                ${transactions.map(tx => `
           <div class="settlement-transaction">
             <div class="settlement-flow">
               <span style="color: #e74c3c; font-weight: bold;">${tx.payer}</span>
@@ -3279,7 +3276,7 @@
             </div>
             <div class="settlement-amount">₹${tx.amount.toFixed(2)}</div>
           </div>`).join('')}
-        </div>`;
+              </div>`;
       }).join('');
 
       // Show empty state if no settlements
@@ -3402,44 +3399,44 @@
       const entries = playerEntries[p.id] || [{ amount: '', type: 'skip' }];
       const rows = entries.map((e, idx) => buildEntryRow(p.id, idx, e)).join('');
       return `
-        <div id="player-block-${p.id}" style="background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;border:1px solid rgba(201,151,58,0.2);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <div style="color:var(--gold2);font-weight:bold;font-size:14px;">${p.name}</div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span id="player-net-${p.id}" style="font-size:12px;font-family:'Cinzel Decorative',cursive;color:var(--gold3);">Net: 0</span>
-              <button onclick="addEntryRow('${p.id}')" style="background:rgba(201,151,58,0.25);border:1px solid var(--gold);color:var(--gold2);border-radius:5px;padding:3px 10px;cursor:pointer;font-size:16px;line-height:1.2;" title="Add another entry">+</button>
-            </div>
-          </div>
-          <div id="entries-${p.id}">${rows}</div>
-        </div>`;
+              <div id="player-block-${p.id}" style="background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;border:1px solid rgba(201,151,58,0.2);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <div style="color:var(--gold2);font-weight:bold;font-size:14px;">${p.name}</div>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <span id="player-net-${p.id}" style="font-size:12px;font-family:'Cinzel Decorative',cursive;color:var(--gold3);">Net: 0</span>
+                    <button onclick="addEntryRow('${p.id}')" style="background:rgba(201,151,58,0.25);border:1px solid var(--gold);color:var(--gold2);border-radius:5px;padding:3px 10px;cursor:pointer;font-size:16px;line-height:1.2;" title="Add another entry">+</button>
+                  </div>
+                </div>
+                <div id="entries-${p.id}">${rows}</div>
+              </div>`;
     }
 
     function buildEntryRow(playerId, idx, entry) {
       const canRemove = idx > 0;
       return `
-        <div id="entry-row-${playerId}-${idx}" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-bottom:6px;">
-          <div>
-            <label style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(201,151,58,0.7);">Amount</label>
-            <input type="number" value="${entry.amount}" placeholder="0" min="0" step="0.1"
-              oninput="updateEntryAmount('${playerId}', ${idx}, this.value)"
-              style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:8px;font-size:13px;width:100%;" />
-          </div>
-          <div>
-            <label style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(201,151,58,0.7);">Result</label>
-            <select onchange="updateEntryType('${playerId}', ${idx}, this.value)"
-              style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:8px;font-size:13px;width:100%;">
-              <option value="skip" ${entry.type === 'skip' ? 'selected' : ''}>-</option>
-              <option value="win"  ${entry.type === 'win'  ? 'selected' : ''}>Win (Profit)</option>
-              <option value="loss" ${entry.type === 'loss' ? 'selected' : ''}>Loss</option>
-            </select>
-          </div>
-          <div style="padding-bottom:2px;">
-            ${canRemove
-              ? `<button onclick="removeEntryRow('${playerId}', ${idx})" title="Remove"
+              <div id="entry-row-${playerId}-${idx}" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-bottom:6px;">
+                <div>
+                  <label style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(201,151,58,0.7);">Amount</label>
+                  <input type="number" value="${entry.amount}" placeholder="0" min="0" step="0.1"
+                    oninput="updateEntryAmount('${playerId}', ${idx}, this.value)"
+                    style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:8px;font-size:13px;width:100%;" />
+                </div>
+                <div>
+                  <label style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:rgba(201,151,58,0.7);">Result</label>
+                  <select onchange="updateEntryType('${playerId}', ${idx}, this.value)"
+                    style="background:rgba(0,0,0,0.5);border:1px solid rgba(201,151,58,0.35);border-radius:6px;color:#e8e0c8;padding:8px;font-size:13px;width:100%;">
+                    <option value="skip" ${entry.type === 'skip' ? 'selected' : ''}>-</option>
+                    <option value="win" ${entry.type === 'win' ? 'selected' : ''}>Win (Profit)</option>
+                    <option value="loss" ${entry.type === 'loss' ? 'selected' : ''}>Loss</option>
+                  </select>
+                </div>
+                <div style="padding-bottom:2px;">
+                  ${canRemove
+          ? `<button onclick="removeEntryRow('${playerId}', ${idx})" title="Remove"
                    style="background:rgba(192,57,43,0.25);border:1px solid rgba(192,57,43,0.5);color:#e74c3c;border-radius:5px;padding:6px 10px;cursor:pointer;font-size:14px;line-height:1;">✕</button>`
-              : `<div style="width:36px;"></div>`}
-          </div>
-        </div>`;
+          : `<div style="width:36px;"></div>`}
+                </div>
+              </div>`;
     }
 
     function addEntryRow(playerId) {
@@ -3493,18 +3490,12 @@
       updatePlayerNet(playerId);
     }
 
-    function submitAddGame() {
+    async function submitAddGame() {
       const gameName = document.getElementById('add-game-name').value.trim();
       const gameDate = document.getElementById('add-game-date').value;
 
-      if (!gameName) {
-        showToast('❌ Please enter a game name');
-        return;
-      }
-      if (!gameDate) {
-        showToast('❌ Please select a date');
-        return;
-      }
+      if (!gameName) { showToast('❌ Please enter a game name'); return; }
+      if (!gameDate) { showToast('❌ Please select a date'); return; }
 
       // Aggregate all entries per player into a single net result
       const results = [];
@@ -3529,85 +3520,48 @@
         }
       });
 
-      if (!hasAnyResult) {
-        showToast('❌ Enter at least one result');
-        return;
-      }
+      if (!hasAnyResult) { showToast('❌ Enter at least one result'); return; }
 
       // Verify balance
       const totalWins = results.filter(r => r.type === 'win').reduce((sum, r) => sum + r.amount, 0);
       const totalLosses = results.filter(r => r.type === 'loss').reduce((sum, r) => sum + r.amount, 0);
-
       if (Math.abs(totalWins - totalLosses) > 0.01) {
         showToast(`❌ Balance error! Wins (${totalWins.toFixed(2)}) ≠ Losses (${totalLosses.toFixed(2)})`);
         return;
       }
 
-      // Create game object with incremented ID
-      const nextGameNumber = state.games.length + 1;
-      const gameId = String(nextGameNumber);
-      const newGame = {
-        id: gameId,
-        name: gameName,
-        date: gameDate,
-        results: results
-      };
+      showToast('Saving game...');
 
-      // Add to state
-      state.games.push(newGame);
-      saveState();
+      const gameId = Date.now() + '';
 
-      // Prepare files
-      const gameFileName = `game-${nextGameNumber}.json`;
-      const gameData = JSON.stringify(newGame, null, 2);
+      // Save game to Supabase
+      const { error: gameError } = await db.from('games').insert({ id: gameId, name: gameName, date: gameDate });
+      if (gameError) { showToast('❌ Error saving game!'); console.error(gameError); return; }
 
-      // Update manifest with incremented numbers
-      const updatedManifest = {
-        games: state.games.map((g, idx) => ({
-          id: String(idx + 1),
-          name: g.name,
-          date: g.date,
-          file: `game-${idx + 1}.json`
-        }))
-      };
-      const manifestData = JSON.stringify(updatedManifest, null, 2);
-
-      // Try to upload to server if configured, else download
-      if (SERVER_UPLOAD_URL) {
-        const formData = new FormData();
-        formData.append('gameFile', new Blob([gameData], { type: 'application/json' }), gameFileName);
-        formData.append('manifestFile', new Blob([manifestData], { type: 'application/json' }), 'games-manifest.json');
-
-        fetch(SERVER_UPLOAD_URL, { method: 'POST', body: formData })
-          .then(r => {
-            if (r.ok) {
-              showToast('✓ Game #' + nextGameNumber + ' - Files uploaded to server!');
-            } else {
-              throw new Error('Upload failed');
-            }
-          })
-          .catch(e => {
-            console.error('Server upload failed, falling back to download:', e);
-            downloadJSON(gameData, gameFileName);
-            setTimeout(() => downloadJSON(manifestData, 'games-manifest.json'), 500);
-            showToast('⚠ Server unavailable - Files downloaded instead');
-          });
-      } else {
-        // No server configured, download files
-        downloadJSON(gameData, gameFileName);
-        setTimeout(() => downloadJSON(manifestData, 'games-manifest.json'), 500);
-        showToast('✓ Game #' + nextGameNumber + ' - Files downloaded (upload manually)');
+      // Save all results
+      for (const r of results) {
+        const { error: rError } = await db.from('game_results').insert({
+          game_id: gameId,
+          player_id: r.playerId,
+          player_name: r.playerName,
+          type: r.type,
+          amount: r.amount
+        });
+        if (rError) { showToast('❌ Error saving result!'); console.error(rError); return; }
       }
 
-      resetAddGameForm();
+      const newGame = { id: gameId, name: gameName, date: gameDate, results };
+      state.games.push(newGame);
+      state.selectedGame = gameId;
+      await saveState();
 
-      // Refresh UI
-      setTimeout(() => {
-        renderOverall();
-        renderMonthly();
-        renderPerGame();
-        renderSettlement();
-      }, 1000);
+      showToast('✓ Game saved! Chips counted. 🃏');
+      resetAddGameForm();
+      renderOverall();
+      renderMonthly();
+      renderPerGame();
+      renderUsers();
+      renderSettlement();
     }
 
     function resetAddGameForm() {
