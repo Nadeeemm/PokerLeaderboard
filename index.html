@@ -2400,7 +2400,7 @@
         <div class="section-title">💳 Settlement Summary</div>
         <div id="settlement-verification"
           style="margin: 0 1rem 1rem; padding: 1rem; border-radius: 12px; border: 2px solid var(--gold); background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); font-size: 13px;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
             <div style="text-align: center;">
               <div
                 style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">
@@ -2412,6 +2412,18 @@
                 style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">
                 Total Profits</div>
               <div id="settlement-total-profit" style="font-size: 20px; font-weight: bold; color: #27ae60;">0</div>
+            </div>
+            <div style="text-align: center;">
+              <div
+                style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">
+                Net Profit</div>
+              <div id="settlement-net-profit" style="font-size: 20px; font-weight: bold; color: #27ae60;">0</div>
+            </div>
+            <div style="text-align: center;">
+              <div
+                style="color: rgba(232, 224, 200, 0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">
+                Net Loss</div>
+              <div id="settlement-net-loss" style="font-size: 20px; font-weight: bold; color: #e74c3c;">0</div>
             </div>
           </div>
           <div
@@ -2937,7 +2949,8 @@
               <div class="stat-box"><span class="stat-val">${totalPlayers}</span><span class="stat-label">Players</span></div>
               <div class="stat-box"><span class="stat-val" style="font-size:clamp(10px,2.5vw,14px)">${bigWinner}</span><span class="stat-label">Top Dog</span></div>`;
       if (!stats.length) { el.innerHTML = '<div class="empty"><div class="card-icon">🃏</div>No games yet.<br>Add your first game!</div>'; return; }
-      el.innerHTML = `<table class="lb-table">
+      el.innerHTML = `<div style="margin: 0 1rem 1.2rem; padding: 1.2rem; background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); border: 2px solid var(--gold); border-radius: 12px; box-shadow: 0 8px 24px rgba(201, 151, 58, 0.2);">
+                <table class="lb-table">
                 <thead><tr>
                   <th style="width:36px">#</th>
                   <th>Player</th>
@@ -2954,7 +2967,8 @@
           </td>
         </tr>`).join('')}
                 </tbody>
-              </table>`;
+              </table>
+              </div>`;
     }
 
     function renderMonthly() {
@@ -2984,6 +2998,7 @@
       }
 
       lb.innerHTML = `
+              <div style="margin: 0 1rem 1.2rem; padding: 1.2rem; background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); border: 2px solid var(--gold); border-radius: 12px; box-shadow: 0 8px 24px rgba(201, 151, 58, 0.2);">
               <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
                 <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${state.selectedMonth} Standings</span>
               </div>
@@ -3004,7 +3019,8 @@
             </td>
           </tr>`).join('')}
                 </tbody>
-              </table>`;
+              </table>
+              </div>`;
     }
     function selectMonth(month) {
       state.selectedMonth = month;
@@ -3069,6 +3085,7 @@
         return bv - av;
       });
       lb.innerHTML = `
+              <div style="margin: 0 1rem 1.2rem; padding: 1.2rem; background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)); border: 2px solid var(--gold); border-radius: 12px; box-shadow: 0 8px 24px rgba(201, 151, 58, 0.2);">
               <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
                 <span style="font-family:'Cinzel Decorative',cursive;font-size:12px;color:var(--gold2)">${game.name}</span>
                 <span style="font-size:11px;color:rgba(232,224,200,0.4)">${game.date}</span>
@@ -3083,7 +3100,8 @@
             <td style="text-align:right" class="${r.type === 'win' ? 'net-pos' : 'net-neg'}">${r.type === 'win' ? '+' : '-'}${r.amount.toFixed(0)}</td>
           </tr>`).join('')}
                 </tbody>
-              </table>`;
+              </table>
+              </div>`;
     }
 
     function selectGame(id) {
@@ -3216,6 +3234,8 @@
         container.innerHTML = '<div class="settlement-empty">🎴 No games yet. Settlements will appear here.</div>';
         document.getElementById('settlement-total-loss').textContent = '0';
         document.getElementById('settlement-total-profit').textContent = '0';
+        document.getElementById('settlement-net-profit').textContent = '0';
+        document.getElementById('settlement-net-loss').textContent = '0';
         document.getElementById('settlement-balance-check').innerHTML = '✓ Balanced';
         document.getElementById('settlement-balance-check').style.color = 'var(--gold2)';
         return;
@@ -3227,6 +3247,22 @@
       // Update verification display
       document.getElementById('settlement-total-loss').textContent = totalLosses.toFixed(2);
       document.getElementById('settlement-total-profit').textContent = totalProfits.toFixed(2);
+      
+      // Calculate Net Profit/Loss: sum of each player's net (positive/negative)
+      const overallStats = getOverallStats();
+      let netProfit = 0;
+      let netLoss = 0;
+      
+      overallStats.forEach(stat => {
+        if (stat.net > 0) {
+          netProfit += stat.net;
+        } else if (stat.net < 0) {
+          netLoss += Math.abs(stat.net);
+        }
+      });
+      
+      document.getElementById('settlement-net-profit').textContent = netProfit.toFixed(2);
+      document.getElementById('settlement-net-loss').textContent = netLoss.toFixed(2);
 
       if (isBalanced) {
         document.getElementById('settlement-balance-check').innerHTML = '✓ Balanced';
@@ -3244,6 +3280,22 @@
 
       // Render transactions grouped by game (latest first)
       container.innerHTML = sortedSettlements.map(({ game, transactions }) => {
+        // Calculate net for each player in this game
+        const playerNets = {};
+        game.results.forEach(result => {
+          if (!playerNets[result.playerName]) {
+            playerNets[result.playerName] = 0;
+          }
+          if (result.type === 'win') {
+            playerNets[result.playerName] += result.amount;
+          } else {
+            playerNets[result.playerName] -= result.amount;
+          }
+        });
+
+        // Sort players by net (winners first)
+        const sortedPlayers = Object.entries(playerNets).sort((a, b) => b[1] - a[1]);
+
         if (transactions.length === 0) {
           return `
               <div class="settlement-game-card">
@@ -3252,6 +3304,17 @@
                     <div class="settlement-game-name">${game.name}</div>
                     <div class="settlement-game-date">${game.date}</div>
                   </div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                  ${sortedPlayers.map(([name, net]) => `
+                    <div class="settlement-transaction">
+                      <div class="settlement-flow">
+                        <span style="font-weight: bold;">${name}</span>
+                      </div>
+                      <div class="settlement-amount" style="color: ${net > 0 ? '#27ae60' : net < 0 ? '#e74c3c' : 'rgba(232, 224, 200, 0.5)'};${net > 0 ? 'text-shadow: 0 0 8px rgba(39, 174, 96, 0.3);' : net < 0 ? 'text-shadow: 0 0 8px rgba(231, 76, 60, 0.3);' : ''}">
+                        ${net > 0 ? '+' : ''}₹${net.toFixed(2)}
+                      </div>
+                    </div>`).join('')}
                 </div>
                 <div style="text-align: center; color: rgba(232, 224, 200, 0.5); font-size: 12px; padding: 1rem;">
                   ✓ All players even
@@ -3267,6 +3330,19 @@
                     <div class="settlement-game-date">${game.date}</div>
                   </div>
                 </div>
+                <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(201, 151, 58, 0.15);">
+                  <div style="font-size: 11px; color: rgba(232, 224, 200, 0.5); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem;">Net P/L by Player</div>
+                  ${sortedPlayers.map(([name, net]) => `
+                    <div class="settlement-transaction" style="margin-bottom: 0.6rem; background: rgba(201, 151, 58, 0.08);">
+                      <div class="settlement-flow">
+                        <span style="font-weight: bold;">${name}</span>
+                      </div>
+                      <div class="settlement-amount" style="color: ${net > 0 ? '#27ae60' : net < 0 ? '#e74c3c' : 'rgba(232, 224, 200, 0.5)'};${net > 0 ? 'text-shadow: 0 0 8px rgba(39, 174, 96, 0.3);' : net < 0 ? 'text-shadow: 0 0 8px rgba(231, 76, 60, 0.3);' : ''}">
+                        ${net > 0 ? '+' : ''}₹${net.toFixed(2)}
+                      </div>
+                    </div>`).join('')}
+                </div>
+                <div style="font-size: 11px; color: rgba(232, 224, 200, 0.5); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem;">Settlements</div>
                 ${transactions.map(tx => `
           <div class="settlement-transaction">
             <div class="settlement-flow">
